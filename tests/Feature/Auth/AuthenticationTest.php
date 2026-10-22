@@ -15,24 +15,48 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
+        $response->assertSee('MOEMEN');
+        $response->assertSee('TEAM');
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_client_users_authenticate_and_redirect_to_emails(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'client',
+            'assigned_domain' => 'albrolosy.com',
+            'password' => bcrypt('Password123!'),
+        ]);
 
         $response = $this->post('/login', [
             'email' => $user->email,
-            'password' => 'password',
+            'password' => 'Password123!',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('emails.index', absolute: false));
+    }
+
+    public function test_admin_users_authenticate_and_redirect_to_admin_dashboard(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'password' => bcrypt('Password123!'),
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $admin->email,
+            'password' => 'Password123!',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('admin.dashboard', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => bcrypt('Password123!'),
+        ]);
 
         $this->post('/login', [
             'email' => $user->email,
@@ -49,6 +73,6 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 }

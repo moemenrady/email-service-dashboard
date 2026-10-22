@@ -28,5 +28,5 @@ return [
     /*
     | Default domain to manage if none assigned to the user
     */
-    'default_domain' => env('MXROUTE_DEFAULT_DOMAIN', 'moemen-team.com'),
+    'default_domain' => env('MXROUTE_DEFAULT_DOMAIN', 'albrolosy.com'),
 ];

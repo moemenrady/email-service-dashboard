@@ -13,25 +13,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin user - Moemen Team
-        User::firstOrCreate(
+        // Admin user - Moemen Team Management
+        User::updateOrCreate(
             ['email' => 'admin@moemen.team'],
             [
                 'name' => 'Moemen Admin',
                 'password' => Hash::make('Password123!'),
                 'role' => 'admin',
-                'assigned_domain' => 'moemen-team.com',
+                'assigned_domain' => 'albrolosy.com',
             ]
         );
 
-        // Client user
-        User::firstOrCreate(
-            ['email' => 'client@moemen.team'],
+        // Client user - assigned specifically to albrolosy.com
+        User::updateOrCreate(
+            ['email' => 'client@albrolosy.com'],
             [
-                'name' => 'Client Demo',
+                'name' => 'شركة البرلسي',
                 'password' => Hash::make('Password123!'),
                 'role' => 'client',
-                'assigned_domain' => 'moemen-team.com',
+                'assigned_domain' => 'albrolosy.com',
             ]
         );
     }
