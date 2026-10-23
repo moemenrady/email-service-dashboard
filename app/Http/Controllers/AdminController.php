@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\MxRouteApiException;
 use App\Models\User;
+use App\Services\DocumentPdfService;
 use App\Services\MxRouteApiService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AdminController extends Controller
 {
@@ -156,7 +158,7 @@ class AdminController extends Controller
     /**
      * Export all client data, mailboxes, and storage to a comprehensive PDF.
      */
-    public function exportClientPdf(User $user, MxRouteApiService $api): Response
+    public function exportClientPdf(Request $request, User $user, MxRouteApiService $api): Response|BinaryFileResponse
     {
         $domain = $user->assigned_domain ?: config('mxroute.default_domain', 'albrolosy.com');
         $emails = [];
@@ -175,7 +177,8 @@ class AdminController extends Controller
             $totalQuotaMb += (int) ($em['quota'] ?? 0);
         }
 
-        $pdf = Pdf::loadView('admin.pdf.client-report', [
+        $data = [
+            'clientUser' => $user,
             'client' => $user,
             'domain' => $domain,
             'emails' => $emails,
@@ -185,10 +188,12 @@ class AdminController extends Controller
             'apiError' => $apiError,
             'webmailUrl' => 'https://mail.albrolosy.com/',
             'serverHost' => 'mail.albrolosy.com',
-            'generatedAt' => now()->format('Y-m-d H:i:s'),
-        ]);
+            'generatedAtFormatted' => now()->translatedFormat('d F Y'),
+        ];
 
-        return $pdf->download("client-report-{$user->name}-{$domain}.pdf");
+        $asDownload = $request->query('view') !== '1' && $request->query('format') !== 'html';
+
+        return DocumentPdfService::render('admin.pdf.client-report', $data, "client-report-{$user->name}-{$domain}.pdf", $asDownload);
     }
 
     /**

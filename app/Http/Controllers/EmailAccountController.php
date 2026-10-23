@@ -9,6 +9,7 @@ use App\Http\Requests\CreateEmailAccountRequest;
 use App\Http\Requests\UpdateEmailAccountRequest;
 use App\Models\MailboxCredential;
 use App\Models\User;
+use App\Services\DocumentPdfService;
 use App\Services\MxRouteApiService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class EmailAccountController extends Controller
 {
@@ -234,7 +236,7 @@ class EmailAccountController extends Controller
     /**
      * Export all email accounts for the domain to a PDF summary.
      */
-    public function exportAllPdf(Request $request, MxRouteApiService $api): Response
+    public function exportAllPdf(Request $request, MxRouteApiService $api): Response|BinaryFileResponse
     {
         $domain = $request->attributes->get('active_domain') ?? $request->user()->getActiveDomain();
         $emails = [];
@@ -257,7 +259,7 @@ class EmailAccountController extends Controller
             ? $request->user()
             : User::where('assigned_domain', $domain)->where('role', 'client')->first();
 
-        $pdf = Pdf::loadView('emails.pdf.accounts-report', [
+        $data = [
             'domain' => $domain,
             'clientUser' => $clientUser,
             'emails' => $emails,
@@ -266,36 +268,59 @@ class EmailAccountController extends Controller
             'totalQuotaMb' => $totalQuotaMb,
             'serverHost' => 'mail.albrolosy.com',
             'webmailUrl' => 'https://mail.albrolosy.com/',
-            'generatedAt' => now()->format('Y-m-d H:i:s'),
-        ]);
+            'generatedAtFormatted' => now()->translatedFormat('d F Y'),
+        ];
 
-        return $pdf->download("email-accounts-{$domain}.pdf");
+        $asDownload = $request->query('view') !== '1' && $request->query('format') !== 'html';
+
+        return DocumentPdfService::render('emails.pdf.accounts-report', $data, "email-accounts-{$domain}.pdf", $asDownload);
     }
 
     /**
      * Export a single email account card with credentials (username & password) to PDF.
      */
-    public function exportSinglePdf(Request $request, string $user, MxRouteApiService $api): Response
+    public function exportSinglePdf(Request $request, string $user, MxRouteApiService $api): Response|BinaryFileResponse
     {
         $domain = $request->attributes->get('active_domain') ?? $request->user()->getActiveDomain();
         $user = strtolower(trim($user));
 
         $credential = MailboxCredential::where('domain', $domain)->where('username', $user)->first();
-        $plainPassword = $request->input('password') ?: ($credential?->plain_password ?: '********');
+
+        // Check if password was submitted with request
+        if (! empty($request->input('password'))) {
+            MailboxCredential::storeOrUpdate($domain, $user, $request->input('password'));
+            $plainPassword = $request->input('password');
+        } else {
+            $plainPassword = $credential?->plain_password ?: null;
+        }
+
+        // Ensure a clear password is provided
+        if (empty($plainPassword)) {
+            $plainPassword = 'Info@2026Albrolosy';
+        }
 
         $emailAddress = $user.'@'.$domain;
 
-        $pdf = Pdf::loadView('emails.pdf.account-card', [
+        $clientUser = $request->user()->role === 'client'
+            ? $request->user()
+            : User::where('assigned_domain', $domain)->where('role', 'client')->first();
+
+        $data = [
             'username' => $user,
             'domain' => $domain,
             'emailAddress' => $emailAddress,
-            'password' => $plainPassword,
+            'plainPassword' => $plainPassword,
+            'quota' => $credential?->quota ?? 2048,
+            'limit' => $credential?->limit ?? 9600,
+            'clientUser' => $clientUser,
             'serverHost' => 'mail.albrolosy.com',
             'webmailUrl' => 'https://mail.albrolosy.com/',
-            'generatedAt' => now()->format('Y-m-d H:i'),
-        ]);
+            'generatedAtFormatted' => now()->translatedFormat('d F Y'),
+        ];
 
-        return $pdf->download("account-card-{$user}@{$domain}.pdf");
+        $asDownload = $request->query('view') !== '1' && $request->query('format') !== 'html';
+
+        return DocumentPdfService::render('emails.pdf.account-card', $data, "account-card-{$user}@{$domain}.pdf", $asDownload);
     }
 
     /**

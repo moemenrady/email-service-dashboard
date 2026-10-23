@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\MailboxCredential;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -36,5 +37,10 @@ class DatabaseSeeder extends Seeder
                 'storage_limit_mb' => 5120,
             ]
         );
+
+        // Pre-seed credentials for active mailboxes on albrolosy.com so passwords show in exports
+        MailboxCredential::storeOrUpdate('albrolosy.com', 'info', 'Info@2026Albrolosy', 2048, 9600);
+        MailboxCredential::storeOrUpdate('albrolosy.com', 'test', 'Test@2026Albrolosy', 1024, 9600);
+        MailboxCredential::storeOrUpdate('albrolosy.com', 'contact', 'Contact@2026Albrolosy', 1024, 9600);
     }
 }

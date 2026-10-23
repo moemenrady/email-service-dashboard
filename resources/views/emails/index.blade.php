@@ -48,6 +48,17 @@
         editQuota: 1024,
         editLimit: 9600,
         deleteUser: null,
+        exportUser: '',
+        exportPassword: '',
+        openExport(username, pass) {
+            if (pass) {
+                window.open('{{ url("emails") }}/' + username + '/export-pdf?password=' + encodeURIComponent(pass), '_blank');
+            } else {
+                this.exportUser = username;
+                this.exportPassword = '';
+                $dispatch('open-modal', 'export-email-modal');
+            }
+        },
         copyToClipboard(text, msg = 'تم النسخ بنجاح!') {
             navigator.clipboard.writeText(text).then(() => {
                 alert(msg);
@@ -264,9 +275,9 @@
                                 <td class="px-6 py-4 text-left">
                                     <div class="flex items-center justify-end gap-1.5">
                                         <!-- Export Single Account Card PDF (with User & Password) -->
-                                        <a href="{{ route('emails.export-single-pdf', $email['username']) }}" class="p-2 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition" title="تصدير بطاقة الحساب وكلمة المرور (PDF)">
+                                        <button type="button" @click="openExport('{{ $email['username'] }}', '{{ $savedPass }}')" class="p-2 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition" title="تصدير بطاقة الحساب وكلمة المرور (PDF)">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        </a>
+                                        </button>
 
                                         <!-- 1-Click Copy Employee Credentials Message -->
                                         <button type="button" @click="copyEmployeeShare('{{ $email['username'] }}', '{{ $savedPass }}')" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition" title="نسخ بيانات الدخول للموظف (واتساب / إيميل)">
@@ -478,6 +489,40 @@
 
                 <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md transition">
                     إنشاء الصندوق الآن
+                </button>
+            </div>
+        </form>
+    </x-modal>
+
+    <!-- Modal: Export Account Card with Password -->
+    <x-modal name="export-email-modal" focusable>
+        <form :action="'{{ url('emails') }}/' + exportUser + '/export-pdf'" method="GET" target="_blank" class="p-6 text-right">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <span>📄 تصدير بطاقة اعتماد الحساب (PDF)</span>
+            </h2>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                الحساب: <span class="font-bold font-mono text-emerald-500" x-text="exportUser + '@{{ $activeDomain }}'"></span>
+            </p>
+
+            <div class="mt-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-1">
+                        كلمة المرور الخاصة بالحساب (لتظهر واضحة للموظف في البطاقة المطبوعة):
+                    </label>
+                    <input type="text" name="password" x-model="exportPassword" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#374A3C] bg-gray-50 dark:bg-[#141B17] text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="أدخل كلمة المرور الحالية للحساب" />
+                    <p class="text-[11px] text-gray-400 mt-1">
+                        سيتم حفظ كلمة المرور مشفرة بأمان وتضمينها بشكل واضح في ملف الـ PDF الرسمي للموظف.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-[#374A3C]">
+                <button type="button" x-on:click="$dispatch('close')" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#374A3C] transition">
+                    إلغاء
+                </button>
+                <button type="submit" @click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md transition inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>تصدير وتحميل البطاقة الرسمية</span>
                 </button>
             </div>
         </form>
