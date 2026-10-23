@@ -49,11 +49,11 @@ class UpdateEmailAccountRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'password.min' => 'Password must be at least 8 characters long.',
-            'password.max' => 'Password cannot exceed 72 characters.',
-            'quota.min' => 'Storage quota must be at least 0 MB.',
-            'limit.min' => 'Daily sending limit must be at least 1.',
-            'limit.max' => 'Daily sending limit cannot exceed 9600.',
+            'password.min' => 'كلمة المرور يجب ألا تقل عن 8 خانات.',
+            'password.max' => 'كلمة المرور يجب ألا تتجاوز 72 خانة.',
+            'quota.min' => 'المساحة التخزينية يجب ألا تقل عن 0 ميجابايت.',
+            'limit.min' => 'الحد اليومي للإرسال يجب أن يكون 1 على الأقل.',
+            'limit.max' => 'الحد اليومي للإرسال لا يمكن أن يتجاوز 9600 رسالة.',
         ];
     }
 }

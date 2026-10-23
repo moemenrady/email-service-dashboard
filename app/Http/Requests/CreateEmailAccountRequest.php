@@ -56,14 +56,14 @@ class CreateEmailAccountRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => 'The mailbox username is required.',
-            'username.regex' => 'The username may only contain letters, numbers, dots, dashes, and underscores.',
-            'password.required' => 'A password is required.',
-            'password.min' => 'Password must be at least 8 characters long.',
-            'password.max' => 'Password cannot exceed 72 characters.',
-            'quota.min' => 'Storage quota must be at least 0 MB (0 = unlimited).',
-            'limit.min' => 'Daily sending limit must be at least 1.',
-            'limit.max' => 'Daily sending limit cannot exceed 9600.',
+            'username.required' => 'اسم المستخدم للبريد الإلكتروني مطلوب.',
+            'username.regex' => 'اسم المستخدم يجب أن يحتوي فقط على أحرف إنجليزية، أرقام، نقاط، أو شرطات.',
+            'password.required' => 'كلمة المرور مطلوبة.',
+            'password.min' => 'كلمة المرور يجب ألا تقل عن 8 خانات.',
+            'password.max' => 'كلمة المرور يجب ألا تتجاوز 72 خانة.',
+            'quota.min' => 'المساحة التخزينية يجب ألا تقل عن 0 ميجابايت (0 = غير محدود).',
+            'limit.min' => 'الحد اليومي للإرسال يجب أن يكون 1 على الأقل.',
+            'limit.max' => 'الحد اليومي للإرسال لا يمكن أن يتجاوز 9600 رسالة.',
         ];
     }
 }

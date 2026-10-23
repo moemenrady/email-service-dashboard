@@ -14,6 +14,15 @@
 
         <!-- Scripts & Styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <script>
+            window.openModal = function(name) {
+                window.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
+            };
+            window.closeModal = function(name) {
+                window.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
+            };
+        </script>
     </head>
     <body class="font-sans antialiased bg-[#F6F7F5] dark:bg-[#141B17] text-gray-900 dark:text-[#E3E7E1] min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
         <div class="flex-1">
@@ -65,7 +74,7 @@
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white/80 dark:bg-[#1F2A24]/90 backdrop-blur-md border-b border-gray-200/80 dark:border-[#374A3C] shadow-sm mb-6">
+                <header x-data class="bg-white/80 dark:bg-[#1F2A24]/90 backdrop-blur-md border-b border-gray-200/80 dark:border-[#374A3C] shadow-sm mb-6">
                     <div class="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>

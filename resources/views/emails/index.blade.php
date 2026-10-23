@@ -34,7 +34,7 @@
                 </a>
 
                 <!-- Create Email Button -->
-                <button @click="$dispatch('open-modal', 'create-email-modal')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-500 hover:to-emerald-600 shadow-md shadow-emerald-900/20 transition transform active:scale-95">
+                <button type="button" @click="$dispatch('open-modal', 'create-email-modal')" onclick="window.openModal('create-email-modal')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-500 hover:to-emerald-600 shadow-md shadow-emerald-900/20 transition transform active:scale-95">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     <span>إنشاء بريد جديد</span>
                 </button>
@@ -175,19 +175,20 @@
                 <!-- Storage Quota -->
                 <div class="p-4 rounded-2xl bg-white dark:bg-[#1F2A24] border border-gray-200 dark:border-[#374A3C] shadow-sm flex items-center justify-between">
                     <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-bold block">المساحة التخزينية المخصصة:</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 font-bold block">المساحة التخزينية المخصصة (الحصة):</span>
                         <div class="mt-1 flex items-baseline gap-2">
-                            <span class="text-2xl font-black text-gray-900 dark:text-white font-mono">{{ $totalUsageMb }} MB</span>
-                            <span class="text-xs text-gray-400 font-mono">/ {{ $clientUser->storage_limit_mb ? $clientUser->storage_limit_mb . ' MB' : 'غير محدود' }}</span>
+                            <span class="text-2xl font-black text-gray-900 dark:text-white font-mono">{{ $totalQuotaMb >= 1024 ? round($totalQuotaMb / 1024, 1) . ' GB' : $totalQuotaMb . ' MB' }}</span>
+                            <span class="text-xs text-gray-400 font-mono">/ {{ $clientUser->storage_limit_mb ? ($clientUser->storage_limit_mb >= 1024 ? round($clientUser->storage_limit_mb / 1024, 1) . ' GB' : $clientUser->storage_limit_mb . ' MB') : 'غير محدود' }}</span>
                         </div>
+                        <span class="text-[10px] text-gray-400 mt-1 block">الاستهلاك الفعلي للملفات: <strong class="text-emerald-500 font-mono">{{ $totalUsageMb }} MB</strong></span>
                     </div>
                     <div class="w-24">
                         @php
-                            $storagePct = $clientUser->storage_limit_mb ? min(100, round(($totalUsageMb / $clientUser->storage_limit_mb) * 100)) : 0;
+                            $storagePct = $clientUser->storage_limit_mb ? min(100, round(($totalQuotaMb / $clientUser->storage_limit_mb) * 100)) : 0;
                         @endphp
                         <div class="text-[11px] font-bold text-right text-gray-400 mb-1">{{ $storagePct }}%</div>
                         <div class="w-full bg-gray-100 dark:bg-[#141B17] h-2 rounded-full overflow-hidden">
-                            <div class="h-full bg-emerald-500 rounded-full" style="width: {{ $storagePct }}%"></div>
+                            <div class="h-full {{ $storagePct > 90 ? 'bg-rose-500' : 'bg-emerald-500' }} rounded-full" style="width: {{ $storagePct }}%"></div>
                         </div>
                     </div>
                 </div>
@@ -245,7 +246,7 @@
                                             <span class="font-bold text-gray-900 dark:text-white block font-mono text-sm" dir="ltr">
                                                 {{ $email['username'] . '@' . $activeDomain }}
                                             </span>
-                                            <span class="text-[11px] text-gray-400">اسم الدخول: {{ $email['username'] }}</span>
+                                            <span class="text-[11px] text-gray-400">اسم الدخول: <strong class="text-emerald-500 font-mono" dir="ltr">{{ $email['username'] . '@' . $activeDomain }}</strong></span>
                                         </div>
                                     </div>
                                 </td>
@@ -416,7 +417,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Modal: Create Email Account -->
     <x-modal name="create-email-modal" :show="$errors->has('username') || $errors->has('password')" focusable>
@@ -527,4 +527,5 @@
             </div>
         </form>
     </x-modal>
+    </div>
 </x-app-layout>

@@ -68,10 +68,10 @@ class CreateForwarderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'alias.required' => 'The forwarder alias is required.',
-            'alias.regex' => 'The forwarder alias may only contain letters, numbers, dots, dashes, and underscores.',
-            'destinations.required' => 'At least one destination email is required.',
-            'destinations.min' => 'At least one destination email is required.',
+            'alias.required' => 'اسم العنوان المستعار للبريد مطلوب.',
+            'alias.regex' => 'العنوان المستعار يجب أن يحتوي فقط على أحرف إنجليزية، أرقام، نقاط، أو شرطات.',
+            'destinations.required' => 'يجب إدخال عنوان بريد إلكتروني واحد على الأقل للوجهة.',
+            'destinations.min' => 'يجب إدخال عنوان بريد إلكتروني واحد على الأقل للوجهة.',
         ];
     }
 }

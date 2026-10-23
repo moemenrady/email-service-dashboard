@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <button @click="$dispatch('open-modal', 'create-forwarder-modal')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-500 hover:to-emerald-600 shadow-md shadow-emerald-900/20 transition transform active:scale-95">
+            <button type="button" @click="$dispatch('open-modal', 'create-forwarder-modal')" onclick="window.openModal('create-forwarder-modal')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-500 hover:to-emerald-600 shadow-md shadow-emerald-900/20 transition transform active:scale-95">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 <span>إنشاء توجيه بريد جديد</span>
             </button>
@@ -186,7 +186,6 @@
                 </form>
             </x-modal>
         </div>
-    </div>
 
     <!-- Modal: Create Forwarder -->
     <x-modal name="create-forwarder-modal" :show="$errors->has('alias') || $errors->has('destinations')" focusable>
@@ -238,4 +237,5 @@
             </div>
         </form>
     </x-modal>
+    </div>
 </x-app-layout>

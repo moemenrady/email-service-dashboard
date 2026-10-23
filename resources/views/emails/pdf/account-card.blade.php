@@ -3,6 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @php
+        $emailAddress = $emailAddress ?? ($email ?? ($username ?? 'user') . '@' . ($domain ?? 'albrolosy.com'));
+        $plainPassword = $plainPassword ?? ($password ?? '********');
+    @endphp
     <title>بطاقة اعتماد حساب بريدي رسمي — {{ $emailAddress }} — Moemen Team</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
