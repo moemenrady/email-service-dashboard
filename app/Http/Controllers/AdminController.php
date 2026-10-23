@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Exceptions\MxRouteApiException;
 use App\Models\User;
 use App\Services\MxRouteApiService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
@@ -63,7 +65,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Create a new client user and assign them a domain.
+     * Create a new client user and assign them a domain with limits.
      */
     public function storeClient(Request $request): RedirectResponse
     {
@@ -72,23 +74,45 @@ class AdminController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', Password::defaults()],
             'assigned_domain' => ['required', 'string', 'max:255'],
+            'max_emails' => ['nullable', 'integer', 'min:1'],
+            'storage_limit_mb' => ['nullable', 'integer', 'min:100'],
         ], [
             'name.required' => 'يرجى إدخال اسم العميل.',
             'email.required' => 'يرجى إدخال البريد الإلكتروني للعميل.',
             'email.unique' => 'هذا البريد الإلكتروني مسجل بالفعل.',
             'password.required' => 'يرجى إدخال كلمة المرور.',
             'assigned_domain.required' => 'يرجى اختيار الدومين المخصص للعميل.',
+            'max_emails.min' => 'يجب أن يكون حد الإيميلات 1 على الأقل.',
+            'storage_limit_mb.min' => 'يجب ألا تقل المساحة المخصصة عن 100 ميجابايت.',
         ]);
 
-        User::create([
+        $maxEmails = ! empty($validated['max_emails']) ? (int) $validated['max_emails'] : null;
+        $storageLimitMb = ! empty($validated['storage_limit_mb']) ? (int) $validated['storage_limit_mb'] : null;
+
+        $user = User::create([
             'name' => $validated['name'],
             'email' => strtolower(trim($validated['email'])),
             'password' => Hash::make($validated['password']),
             'role' => 'client',
             'assigned_domain' => strtolower(trim($validated['assigned_domain'])),
+            'max_emails' => $maxEmails,
+            'storage_limit_mb' => $storageLimitMb,
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'تم إنشاء حساب العميل وتخصيص الدومين له بنجاح.');
+        $credentialsPayload = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => $validated['password'],
+            'assigned_domain' => $user->assigned_domain,
+            'max_emails' => $user->max_emails ? $user->max_emails.' حسابات' : 'غير محدود (Unlimited)',
+            'storage_limit_mb' => $user->storage_limit_mb ? $user->storage_limit_mb.' MB' : 'غير محدود (Unlimited)',
+            'login_url' => route('login'),
+            'webmail_url' => 'https://mail.albrolosy.com/',
+        ];
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'تم إنشاء حساب العميل وتخصيص الباقة له بنجاح.')
+            ->with('new_client_credentials', $credentialsPayload);
     }
 
     /**
@@ -98,29 +122,73 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'password' => ['nullable', 'string', Password::defaults()],
             'assigned_domain' => ['required', 'string', 'max:255'],
+            'max_emails' => ['nullable', 'integer', 'min:1'],
+            'storage_limit_mb' => ['nullable', 'integer', 'min:100'],
         ], [
             'name.required' => 'يرجى إدخال اسم العميل.',
             'email.required' => 'يرجى إدخال البريد الإلكتروني للعميل.',
             'email.unique' => 'هذا البريد الإلكتروني مسجل لعميل آخر.',
             'assigned_domain.required' => 'يرجى اختيار الدومين المخصص للعميل.',
+            'max_emails.min' => 'يجب أن يكون حد الإيميلات 1 على الأقل.',
+            'storage_limit_mb.min' => 'يجب ألا تقل المساحة المخصصة عن 100 ميجابايت.',
         ]);
 
         $data = [
             'name' => $validated['name'],
             'email' => strtolower(trim($validated['email'])),
             'assigned_domain' => strtolower(trim($validated['assigned_domain'])),
+            'max_emails' => ! empty($validated['max_emails']) ? (int) $validated['max_emails'] : null,
+            'storage_limit_mb' => ! empty($validated['storage_limit_mb']) ? (int) $validated['storage_limit_mb'] : null,
         ];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $data['password'] = Hash::make($validated['password']);
         }
 
         $user->update($data);
 
-        return redirect()->route('admin.dashboard')->with('success', 'تم تحديث بيانات العميل بنجاح.');
+        return redirect()->route('admin.dashboard')->with('success', 'تم تحديث بيانات العميل وباقته بنجاح.');
+    }
+
+    /**
+     * Export all client data, mailboxes, and storage to a comprehensive PDF.
+     */
+    public function exportClientPdf(User $user, MxRouteApiService $api): Response
+    {
+        $domain = $user->assigned_domain ?: config('mxroute.default_domain', 'albrolosy.com');
+        $emails = [];
+        $apiError = null;
+
+        try {
+            $emails = $api->listEmailAccounts($domain);
+        } catch (\Exception $e) {
+            $apiError = $e->getMessage();
+        }
+
+        $totalUsageMb = 0;
+        $totalQuotaMb = 0;
+        foreach ($emails as $em) {
+            $totalUsageMb += (float) ($em['usage'] ?? 0);
+            $totalQuotaMb += (int) ($em['quota'] ?? 0);
+        }
+
+        $pdf = Pdf::loadView('admin.pdf.client-report', [
+            'client' => $user,
+            'domain' => $domain,
+            'emails' => $emails,
+            'mailboxesCount' => count($emails),
+            'totalUsageMb' => round($totalUsageMb, 2),
+            'totalQuotaMb' => $totalQuotaMb,
+            'apiError' => $apiError,
+            'webmailUrl' => 'https://mail.albrolosy.com/',
+            'serverHost' => 'mail.albrolosy.com',
+            'generatedAt' => now()->format('Y-m-d H:i:s'),
+        ]);
+
+        return $pdf->download("client-report-{$user->name}-{$domain}.pdf");
     }
 
     /**
@@ -153,6 +221,7 @@ class AdminController extends Controller
 
         try {
             $api->createDomain($domain);
+
             return redirect()->route('admin.dashboard')->with('success', "تمت إضافة الدومين [{$domain}] إلى خادم البريد بنجاح.");
         } catch (MxRouteApiException $e) {
             return redirect()->route('admin.dashboard')->with('error', $e->getMessage());
@@ -166,6 +235,7 @@ class AdminController extends Controller
     {
         try {
             $api->deleteDomain($domain);
+
             return redirect()->route('admin.dashboard')->with('success', "تم حذف الدومين [{$domain}] من خادم البريد.");
         } catch (MxRouteApiException $e) {
             return redirect()->route('admin.dashboard')->with('error', $e->getMessage());
@@ -178,7 +248,7 @@ class AdminController extends Controller
     public function switchDomain(Request $request): RedirectResponse
     {
         $domain = $request->input('domain');
-        if (!empty($domain)) {
+        if (! empty($domain)) {
             session(['active_domain' => strtolower(trim($domain))]);
         }
 

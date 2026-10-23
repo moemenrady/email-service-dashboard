@@ -28,23 +28,28 @@
                     @endif
 
                     <!-- Email Accounts link for all users -->
-                    <a href="{{ route('emails.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request()->routeIs('emails.*') ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-300 hover:text-white hover:bg-[#374A3C]/60' }}">
+                    <a href="{{ route('emails.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request()->routeIs('emails.index') ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-300 hover:text-white hover:bg-[#374A3C]/60' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
                         <span>حسابات البريد (Email Accounts)</span>
+                    </a>
+
+                    <!-- Forwarders for all users -->
+                    <a href="{{ route('forwarders.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request()->routeIs('forwarders.*') ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-300 hover:text-white hover:bg-[#374A3C]/60' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                        <span>إعادة التوجيه (Forwarders)</span>
+                    </a>
+
+                    <!-- Setup Guide -->
+                    <a href="{{ route('emails.guide') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request()->routeIs('emails.guide') ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-300 hover:text-white hover:bg-[#374A3C]/60' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <span>دليل الاستخدام (Guide)</span>
                     </a>
 
                     <!-- DNS settings -->
                     <a href="{{ route('domains.dns') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request()->routeIs('domains.dns') ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-300 hover:text-white hover:bg-[#374A3C]/60' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <span>إعدادات DNS والسيرفر</span>
+                        <span>إعدادات DNS</span>
                     </a>
-
-                    @if (Auth::user()->isAdmin())
-                        <a href="{{ route('forwarders.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request()->routeIs('forwarders.*') ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-300 hover:text-white hover:bg-[#374A3C]/60' }}">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-                            <span>إعادة التوجيه (Forwarders)</span>
-                        </a>
-                    @endif
                 </div>
             </div>
 
@@ -58,7 +63,7 @@
                 </div>
 
                 <!-- Webmail Shortcut Button -->
-                <a href="https://webmail.{{ session('active_domain', Auth::user()->getActiveDomain()) }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#374A3C] text-emerald-300 hover:bg-[#506055] border border-emerald-500/30 shadow-sm transition" title="فتح واجهة بريد الويب">
+                <a href="https://mail.albrolosy.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#374A3C] text-emerald-300 hover:bg-[#506055] border border-emerald-500/30 shadow-sm transition" title="فتح واجهة بريد الويب">
                     <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     <span>Webmail</span>
                 </a>
@@ -95,6 +100,18 @@
 
                         <x-dropdown-link :href="route('emails.index')" class="text-right text-xs">
                             ✉️ حسابات البريد الإلكتروني
+                        </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('forwarders.index')" class="text-right text-xs">
+                            🔄 إعادة التوجيه (Forwarders)
+                        </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('emails.guide')" class="text-right text-xs">
+                            📖 دليل الاستخدام والربط
+                        </x-dropdown-link>
+
+                        <x-dropdown-link href="https://mail.albrolosy.com/" target="_blank" class="text-right text-xs text-emerald-400">
+                            🌐 فتح بريد الويب (Webmail)
                         </x-dropdown-link>
 
                         <x-dropdown-link :href="route('profile.edit')" class="text-right text-xs">
@@ -134,8 +151,17 @@
             <a href="{{ route('emails.index') }}" class="block px-3 py-2 rounded-xl text-sm font-bold text-gray-200 hover:bg-[#2B3B32]">
                 ✉️ حسابات البريد الإلكتروني
             </a>
+            <a href="{{ route('forwarders.index') }}" class="block px-3 py-2 rounded-xl text-sm font-bold text-gray-200 hover:bg-[#2B3B32]">
+                🔄 إعادة التوجيه (Forwarders)
+            </a>
+            <a href="{{ route('emails.guide') }}" class="block px-3 py-2 rounded-xl text-sm font-bold text-gray-200 hover:bg-[#2B3B32]">
+                📖 دليل الاستخدام والربط
+            </a>
             <a href="{{ route('domains.dns') }}" class="block px-3 py-2 rounded-xl text-sm font-bold text-gray-200 hover:bg-[#2B3B32]">
-                🌐 إعدادات DNS والسيرفر
+                🌐 إعدادات DNS
+            </a>
+            <a href="https://mail.albrolosy.com/" target="_blank" class="block px-3 py-2 rounded-xl text-sm font-bold text-emerald-400 hover:bg-[#2B3B32]">
+                🌐 فتح بريد الويب (Webmail)
             </a>
         </div>
 

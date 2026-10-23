@@ -34,6 +34,30 @@ class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the user is an admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+            'assigned_domain' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is a client with domain and optional limits.
+     */
+    public function client(string $domain = 'albrolosy.com', ?int $maxEmails = null, ?int $storageLimitMb = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'client',
+            'assigned_domain' => $domain,
+            'max_emails' => $maxEmails,
+            'storage_limit_mb' => $storageLimitMb,
+        ]);
+    }
+
+    /**
      * Indicate that the model's email address should be unverified.
      */
     public function unverified(): static

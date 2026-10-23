@@ -13,6 +13,7 @@ class ForwarderTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $domain = 'moemen-team.com';
 
     protected function setUp(): void
@@ -43,7 +44,7 @@ class ForwarderTest extends TestCase
         $response = $this->actingAs($this->user)->get('/forwarders');
 
         $response->assertStatus(200);
-        $response->assertSee('support@' . $this->domain);
+        $response->assertSee('support@'.$this->domain);
         $response->assertSee('agent1@gmail.com');
         $response->assertSee('agent2@gmail.com');
     }

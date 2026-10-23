@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Moemen Workspace') }} — فريق مؤمن للتطوير البرمجي</title>
+        <title>{{ config('app.name', 'email-service-dashboard') }} — مؤمن تيم</title>
 
         <!-- Fonts: Cairo & Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,7 +85,7 @@
                     <div class="logo-badge w-6 h-6"></div>
                     <span class="font-extrabold text-gray-800 dark:text-white">فريق مؤمن للتطوير البرمجي</span>
                     <span>•</span>
-                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">Moemen Workspace — Mail Panel</span>
+                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">email-service-dashboard • مؤمن تيم</span>
                 </div>
                 <div class="text-[11px] text-gray-400">
                     بنية بريد سحابية آمنة ومحمية بالكامل © {{ date('Y') }}

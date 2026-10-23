@@ -75,13 +75,13 @@
                                 <td class="px-5 py-3.5 font-mono font-bold text-xs text-blue-500">MX</td>
                                 <td class="px-5 py-3.5 font-mono text-xs">@</td>
                                 <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-500">10</td>
-                                <td class="px-5 py-3.5 font-mono text-xs font-semibold text-gray-900 dark:text-white">fusion.mxrouting.net</td>
+                                <td class="px-5 py-3.5 font-mono text-xs font-semibold text-gray-900 dark:text-white">mail.albrolosy.com</td>
                             </tr>
                             <tr class="hover:bg-gray-50/60 dark:hover:bg-[#2B3B32]/40">
                                 <td class="px-5 py-3.5 font-mono font-bold text-xs text-blue-500">MX</td>
                                 <td class="px-5 py-3.5 font-mono text-xs">@</td>
                                 <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-500">20</td>
-                                <td class="px-5 py-3.5 font-mono text-xs font-semibold text-gray-900 dark:text-white">fusion-relay.mxrouting.net</td>
+                                <td class="px-5 py-3.5 font-mono text-xs font-semibold text-gray-900 dark:text-white">relay.albrolosy.com</td>
                             </tr>
                         @endif
                     </tbody>
@@ -94,12 +94,15 @@
             <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">2. سجل التحقق من مصدر البريد (SPF Record)</h3>
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">يمنع تزييف الرسائل باسم دومينك ويوثق صلاحية إرسال الخادم السحابي.</p>
 
+            @php
+                $spfVal = !empty($dnsInfo['spf']['value']) ? $dnsInfo['spf']['value'] : 'v=spf1 a mx include:mail.albrolosy.com ~all';
+            @endphp
             <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#141B17] border border-gray-200/60 dark:border-[#374A3C] font-mono text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="space-y-1">
                     <span class="text-[11px] text-gray-400 font-sans block">نوع السجل: TXT • المضيف: @</span>
-                    <span class="text-emerald-500 font-bold block" dir="ltr">v=spf1 include:mxroute.com -all</span>
+                    <span class="text-emerald-500 font-bold block" dir="ltr">{{ $spfVal }}</span>
                 </div>
-                <button onclick="navigator.clipboard.writeText('v=spf1 include:mxroute.com -all'); alert('تم نسخ سجل SPF بنجاح!');" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#374A3C] text-white hover:bg-[#506055] transition shrink-0">
+                <button onclick="navigator.clipboard.writeText('{{ $spfVal }}'); alert('تم نسخ سجل SPF بنجاح!');" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#374A3C] text-white hover:bg-[#506055] transition shrink-0">
                     نسخ القيمة
                 </button>
             </div>
@@ -125,8 +128,8 @@
 
         <!-- 4. Webmail CNAME -->
         <div class="bg-white dark:bg-[#1F2A24] shadow-sm rounded-2xl p-6 border border-gray-200 dark:border-[#374A3C]">
-            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">3. رابط بريد الويب المخصص (Webmail CNAME)</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">لفتح بريد الويب عبر رابط خاص بدومينك مباشرة مثل https://webmail.{{ $activeDomain }}.</p>
+            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">4. رابط بريد الويب المخصص (Webmail CNAME)</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">لفتح بريد الويب عبر رابط خاص بدومينك مباشرة أو الدخول عبر <a href="https://mail.albrolosy.com/" target="_blank" class="text-emerald-500 underline font-bold">https://mail.albrolosy.com/</a>.</p>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-right text-sm text-gray-600 dark:text-gray-300">
@@ -141,12 +144,12 @@
                         <tr class="hover:bg-gray-50/60 dark:hover:bg-[#2B3B32]/40">
                             <td class="px-5 py-3.5 font-mono font-bold text-xs text-purple-500">CNAME</td>
                             <td class="px-5 py-3.5 font-mono text-xs font-bold text-gray-900 dark:text-white">webmail</td>
-                            <td class="px-5 py-3.5 font-mono text-xs text-emerald-500 font-bold">fusion.mxrouting.net</td>
+                            <td class="px-5 py-3.5 font-mono text-xs text-emerald-500 font-bold">mail.albrolosy.com</td>
                         </tr>
                         <tr class="hover:bg-gray-50/60 dark:hover:bg-[#2B3B32]/40">
                             <td class="px-5 py-3.5 font-mono font-bold text-xs text-purple-500">CNAME</td>
                             <td class="px-5 py-3.5 font-mono text-xs font-bold text-gray-900 dark:text-white">mail</td>
-                            <td class="px-5 py-3.5 font-mono text-xs text-emerald-500 font-bold">fusion.mxrouting.net</td>
+                            <td class="px-5 py-3.5 font-mono text-xs text-emerald-500 font-bold">mail.albrolosy.com</td>
                         </tr>
                     </tbody>
                 </table>

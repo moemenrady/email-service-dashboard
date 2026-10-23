@@ -12,6 +12,7 @@ class DnsTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $domain = 'moemen-team.com';
 
     protected function setUp(): void
@@ -52,7 +53,8 @@ class DnsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Mail Exchanger (MX) Records');
-        $response->assertSee('v=spf1 include:mxroute.com -all');
+        $response->assertDontSee('mxroute.com');
+        $response->assertSee('include:mail.albrolosy.com');
         $response->assertSee('x._domainkey');
     }
 }

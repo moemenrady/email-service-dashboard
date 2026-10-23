@@ -13,6 +13,7 @@ class EmailAccountTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $domain = 'moemen-team.com';
 
     protected function setUp(): void
@@ -47,7 +48,7 @@ class EmailAccountTest extends TestCase
         $response = $this->actingAs($this->user)->get('/emails');
 
         $response->assertStatus(200);
-        $response->assertSee('info@' . $this->domain);
+        $response->assertSee('info@'.$this->domain);
         $response->assertSee('1024 MB');
     }
 

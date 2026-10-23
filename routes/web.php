@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\EmailAccountController;
 use App\Http\Controllers\ForwarderController;
@@ -10,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 // Entrance: strictly redirect to login if guest, or role-based dashboard if authenticated
 Route::get('/', function () {
-    if (!auth()->check()) {
+    if (! auth()->check()) {
         return redirect()->route('login');
     }
 
@@ -25,6 +24,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/clients', [AdminController::class, 'storeClient'])->name('clients.store');
     Route::patch('/clients/{user}', [AdminController::class, 'updateClient'])->name('clients.update');
     Route::delete('/clients/{user}', [AdminController::class, 'destroyClient'])->name('clients.destroy');
+    Route::get('/clients/{user}/export-pdf', [AdminController::class, 'exportClientPdf'])->name('clients.export-pdf');
     Route::post('/domains', [AdminController::class, 'storeDomain'])->name('domains.store');
     Route::delete('/domains/{domain}', [AdminController::class, 'deleteDomain'])->name('domains.destroy');
     Route::post('/domains/switch', [AdminController::class, 'switchDomain'])->name('domains.switch');
@@ -37,16 +37,22 @@ Route::middleware(['auth', 'domain.auth'])->group(function () {
         if (auth()->user()->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
+
         return redirect()->route('emails.index');
     })->name('dashboard');
+
+    // Setup & User Guide
+    Route::get('/guide', [EmailAccountController::class, 'guide'])->name('emails.guide');
 
     // Domains
     Route::post('/domains/switch', [DomainController::class, 'switchDomain'])->name('domains.switch');
     Route::get('/domain/dns', [DomainController::class, 'showDns'])->name('domains.dns');
 
-    // Email Accounts Management (CRUD) - Primary interface for clients
+    // Email Accounts Management (CRUD) & PDF Exports
     Route::get('/emails', [EmailAccountController::class, 'index'])->name('emails.index');
     Route::post('/emails', [EmailAccountController::class, 'store'])->name('emails.store');
+    Route::get('/emails/export-all-pdf', [EmailAccountController::class, 'exportAllPdf'])->name('emails.export-all-pdf');
+    Route::match(['GET', 'POST'], '/emails/{user}/export-pdf', [EmailAccountController::class, 'exportSinglePdf'])->name('emails.export-single-pdf');
     Route::patch('/emails/{user}', [EmailAccountController::class, 'update'])->name('emails.update');
     Route::delete('/emails/{user}', [EmailAccountController::class, 'destroy'])->name('emails.destroy');
 

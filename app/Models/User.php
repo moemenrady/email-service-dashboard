@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'role',
         'assigned_domain',
+        'max_emails',
+        'storage_limit_mb',
     ];
 
     /**
@@ -46,6 +48,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'max_emails' => 'integer',
+            'storage_limit_mb' => 'integer',
         ];
     }
 

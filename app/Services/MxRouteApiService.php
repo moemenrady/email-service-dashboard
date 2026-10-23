@@ -14,11 +14,17 @@ use Illuminate\Support\Facades\Log;
 class MxRouteApiService
 {
     protected string $baseUrl;
+
     protected string $server;
+
     protected string $username;
+
     protected string $apiKey;
+
     protected int $timeout;
+
     protected int $retryAttempts;
+
     protected int $retryBackoffMs;
 
     public function __construct(
@@ -55,16 +61,14 @@ class MxRouteApiService
     /**
      * Send HTTP request with automatic rate-limit detection, backoff, and error mapping.
      *
-     * @param string $method GET, POST, PATCH, DELETE
-     * @param string $endpoint
-     * @param array $data
-     * @return array
+     * @param  string  $method  GET, POST, PATCH, DELETE
+     *
      * @throws MxRouteApiException
      */
     public function request(string $method, string $endpoint, array $data = []): array
     {
         $method = strtoupper($method);
-        $endpoint = '/' . ltrim($endpoint, '/');
+        $endpoint = '/'.ltrim($endpoint, '/');
         $attempt = 0;
 
         while (true) {
@@ -92,6 +96,7 @@ class MxRouteApiService
                     if ($method === 'GET' && $attempt <= $this->retryAttempts && $retryAfter <= 3) {
                         Log::warning("MXroute API rate limited (429). Retrying in {$retryAfter}s (attempt {$attempt})");
                         sleep($retryAfter);
+
                         continue;
                     }
 
@@ -110,6 +115,7 @@ class MxRouteApiService
                     if ($response->status() === 204) {
                         return ['success' => true];
                     }
+
                     return $response->json() ?? ['success' => true];
                 }
 
@@ -119,13 +125,13 @@ class MxRouteApiService
             } catch (MxRouteApiException $e) {
                 throw $e;
             } catch (\Exception $e) {
-                Log::error('MXroute API Client Exception: ' . $e->getMessage(), [
+                Log::error('MXroute API Client Exception: '.$e->getMessage(), [
                     'method' => $method,
                     'endpoint' => $endpoint,
                 ]);
 
                 throw new MxRouteApiException(
-                    message: 'Failed to communicate with mail server. ' . MxRouteApiException::sanitizeMessage($e->getMessage()),
+                    message: 'Failed to communicate with mail server. '.MxRouteApiException::sanitizeMessage($e->getMessage()),
                     statusCode: 500,
                     errorCode: 'SERVER_ERROR'
                 );
@@ -271,6 +277,7 @@ class MxRouteApiService
     public function listDomains(): array
     {
         $res = $this->request('GET', '/domains');
+
         return $res['data'] ?? [];
     }
 
@@ -281,6 +288,7 @@ class MxRouteApiService
     public function createDomain(string $domain): array
     {
         $res = $this->request('POST', '/domains', ['domain' => strtolower(trim($domain))]);
+
         return $res['data'] ?? [];
     }
 
@@ -291,6 +299,7 @@ class MxRouteApiService
     public function getDomain(string $domain): array
     {
         $res = $this->request('GET', "/domains/{$domain}");
+
         return $res['data'] ?? [];
     }
 
@@ -301,7 +310,8 @@ class MxRouteApiService
     public function deleteDomain(string $domain): bool
     {
         $res = $this->request('DELETE', "/domains/{$domain}");
-        return !empty($res['success']);
+
+        return ! empty($res['success']);
     }
 
     /**
@@ -311,7 +321,8 @@ class MxRouteApiService
     public function setMailHostingStatus(string $domain, bool $enabled): bool
     {
         $res = $this->request('PATCH', "/domains/{$domain}/mail-status", ['enabled' => $enabled]);
-        return !empty($res['success']);
+
+        return ! empty($res['success']);
     }
 
     /*
@@ -327,6 +338,7 @@ class MxRouteApiService
     public function listEmailAccounts(string $domain): array
     {
         $res = $this->request('GET', "/domains/{$domain}/email-accounts");
+
         return $res['data'] ?? [];
     }
 
@@ -337,6 +349,7 @@ class MxRouteApiService
     public function getEmailAccount(string $domain, string $user): array
     {
         $res = $this->request('GET', "/domains/{$domain}/email-accounts/{$user}");
+
         return $res['data'] ?? [];
     }
 
@@ -359,6 +372,7 @@ class MxRouteApiService
         ];
 
         $res = $this->request('POST', "/domains/{$domain}/email-accounts", $payload);
+
         return $res['data'] ?? ['success' => true];
     }
 
@@ -388,6 +402,7 @@ class MxRouteApiService
         }
 
         $res = $this->request('PATCH', "/domains/{$domain}/email-accounts/{$user}", $payload);
+
         return $res['data'] ?? ['success' => true];
     }
 
@@ -398,7 +413,8 @@ class MxRouteApiService
     public function deleteEmailAccount(string $domain, string $user): bool
     {
         $res = $this->request('DELETE', "/domains/{$domain}/email-accounts/{$user}");
-        return !empty($res['success']);
+
+        return ! empty($res['success']);
     }
 
     /*
@@ -414,6 +430,7 @@ class MxRouteApiService
     public function listForwarders(string $domain): array
     {
         $res = $this->request('GET', "/domains/{$domain}/forwarders");
+
         return $res['data'] ?? [];
     }
 
@@ -429,6 +446,7 @@ class MxRouteApiService
         ];
 
         $res = $this->request('POST', "/domains/{$domain}/forwarders", $payload);
+
         return $res['data'] ?? ['success' => true];
     }
 
@@ -439,7 +457,8 @@ class MxRouteApiService
     public function deleteForwarder(string $domain, string $alias): bool
     {
         $res = $this->request('DELETE', "/domains/{$domain}/forwarders/{$alias}");
-        return !empty($res['success']);
+
+        return ! empty($res['success']);
     }
 
     /*
@@ -479,6 +498,7 @@ class MxRouteApiService
     public function getDnsInfo(string $domain): array
     {
         $res = $this->request('GET', "/domains/{$domain}/dns");
+
         return $res['data'] ?? [];
     }
 
@@ -495,6 +515,7 @@ class MxRouteApiService
     public function getCatchAll(string $domain): array
     {
         $res = $this->request('GET', "/domains/{$domain}/catch-all");
+
         return $res['data'] ?? [];
     }
 
@@ -510,6 +531,7 @@ class MxRouteApiService
         }
 
         $res = $this->request('PATCH', "/domains/{$domain}/catch-all", $payload);
+
         return $res['data'] ?? ['success' => true];
     }
 }

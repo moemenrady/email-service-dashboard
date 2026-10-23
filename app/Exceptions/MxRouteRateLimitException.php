@@ -14,9 +14,9 @@ class MxRouteRateLimitException extends MxRouteApiException
     ) {
         $this->retryAfter = max(1, $retryAfter);
 
-        $sanitized = !empty($message) ? self::sanitizeMessage($message) : '';
+        $sanitized = ! empty($message) ? self::sanitizeMessage($message) : '';
 
-        $fullMessage = "Rate limit reached. " . ($sanitized ? $sanitized . " " : "") . "Please wait {$this->retryAfter} seconds before retrying.";
+        $fullMessage = 'Rate limit reached. '.($sanitized ? $sanitized.' ' : '')."Please wait {$this->retryAfter} seconds before retrying.";
 
         parent::__construct(
             message: $fullMessage,

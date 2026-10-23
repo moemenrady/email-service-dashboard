@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateForwarderRequest extends FormRequest
@@ -28,7 +29,7 @@ class CreateForwarderRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -53,7 +54,7 @@ class CreateForwarderRequest extends FormRequest
                     if ($val === ':blackhole:' || $val === ':fail:') {
                         return;
                     }
-                    if (!filter_var($val, FILTER_VALIDATE_EMAIL)) {
+                    if (! filter_var($val, FILTER_VALIDATE_EMAIL)) {
                         $fail("The destination '{$val}' must be a valid email address or special target (:blackhole:, :fail:).");
                     }
                 },

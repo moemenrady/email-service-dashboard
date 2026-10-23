@@ -13,6 +13,7 @@ class CreateEmailAccountJob implements ShouldQueue
     use Queueable;
 
     public int $tries = 5;
+
     public int $backoff = 30;
 
     /**

@@ -19,7 +19,7 @@ class JobsTest extends TestCase
             ], 201),
         ]);
 
-        $api = new MxRouteApiService();
+        $api = new MxRouteApiService;
         $job = new CreateEmailAccountJob('moemen-team.com', 'testqueued', 'Password123!', 1024, 9600);
 
         $job->handle($api);
@@ -39,7 +39,7 @@ class JobsTest extends TestCase
             ], 201),
         ]);
 
-        $api = new MxRouteApiService();
+        $api = new MxRouteApiService;
         $job = new CreateForwarderJob('moemen-team.com', 'support', ['help@domain.com']);
 
         $job->handle($api);

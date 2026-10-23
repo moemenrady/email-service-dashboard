@@ -13,6 +13,7 @@ class RateLimitingTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $domain = 'moemen-team.com';
 
     protected function setUp(): void

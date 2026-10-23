@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Client user - assigned specifically to albrolosy.com
+        // Client user - assigned specifically to albrolosy.com with email and storage quota
         User::updateOrCreate(
             ['email' => 'client@albrolosy.com'],
             [
@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('Password123!'),
                 'role' => 'client',
                 'assigned_domain' => 'albrolosy.com',
+                'max_emails' => 10,
+                'storage_limit_mb' => 5120,
             ]
         );
     }

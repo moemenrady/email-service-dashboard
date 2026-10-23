@@ -7,8 +7,11 @@ use Exception;
 class MxRouteApiException extends Exception
 {
     protected ?string $errorCode;
+
     protected ?string $field;
+
     protected int $statusCode;
+
     protected array $responseData;
 
     public function __construct(

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>تسجيل الدخول | Moemen Team</title>
+    <title>تسجيل الدخول | email-service-dashboard — مؤمن تيم</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
                         MOEMEN <span class="text-primary-400">TEAM</span>
                     </span>
                     <span class="text-[11px] font-semibold text-lightSage tracking-widest block mt-1">
-                        فريق مؤمن للتطوير البرمجي
+                        لوحة إدارة البريد الإلكتروني • email-service-dashboard
                     </span>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                     منظومة إدارة البريد السحابي
                 </h1>
                 <p id="typewriter-text" class="text-xs sm:text-sm text-lightSage opacity-90 mt-1 min-h-[22px]">
-                    شريكك التقني في بناء وتأمين الأعمال.
+                    فريق مؤمن للتطوير البرمجي • الشريك التقني لبناء وتأمين الأعمال
                 </p>
             </div>
 
@@ -87,17 +87,6 @@
                     <span>تسجيل الدخول</span>
                     <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
-
-                <!-- Quick Seed Credentials Helper -->
-                <div class="pt-3 border-t border-white/10 text-[11px] text-lightSage flex items-center justify-between">
-                    <button type="button" onclick="fillCreds('admin@moemen.team', 'Password123!')" class="hover:text-white transition">
-                        حساب الإدارة: <strong class="text-primary-400">Admin</strong>
-                    </button>
-                    <span>•</span>
-                    <button type="button" onclick="fillCreds('client@albrolosy.com', 'Password123!')" class="hover:text-white transition">
-                        حساب العميل: <strong class="text-primary-400">Client</strong>
-                    </button>
-                </div>
             </form>
 
             <footer class="text-center text-[11px] text-gray-400">
@@ -106,12 +95,8 @@
         </div>
     </div>
 
-    <!-- Particle canvas script & Credential helper -->
+    <!-- Particle canvas script -->
     <script>
-        function fillCreds(email, pass) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = pass;
-        }
 
         // Background particles
         (function() {
