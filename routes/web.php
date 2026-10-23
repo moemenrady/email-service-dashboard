@@ -43,6 +43,7 @@ Route::middleware(['auth', 'domain.auth'])->group(function () {
 
     // Setup & User Guide
     Route::get('/guide', [EmailAccountController::class, 'guide'])->name('emails.guide');
+    Route::get('/emails/guide', [EmailAccountController::class, 'guide']);
 
     // Domains
     Route::post('/domains/switch', [DomainController::class, 'switchDomain'])->name('domains.switch');
