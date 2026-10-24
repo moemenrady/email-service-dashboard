@@ -584,7 +584,7 @@
                 <tr>
                     <td class="cred-label">Master Secure Password:</td>
                     <td class="cred-value">
-                        <span class="cred-box secret mono" style="font-size:12px; letter-spacing:0.5px;">Xzd\7Xy5ZqU6\;{Clrr3<&amp;</span>
+                        <span class="cred-box secret mono" style="font-size:13px; letter-spacing:0.5px;">Xzd@7Xy5ZqU6#Clrr3!</span>
                     </td>
                 </tr>
                 <tr>
