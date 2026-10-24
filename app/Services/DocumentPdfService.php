@@ -99,4 +99,57 @@ class DocumentPdfService
             ]);
         }
     }
+
+    /**
+     * Render a view directly to a PDF file on disk.
+     */
+    public static function renderToFile(string $view, array $data, string $outputPath): bool
+    {
+        $html = View::make($view, array_merge($data, [
+            'isPdfMode' => true,
+        ]))->render();
+
+        $chromeBin = static::getChromeBinary();
+
+        if ($chromeBin && function_exists('exec') && ! str_contains((string) ini_get('disable_functions'), 'exec')) {
+            $tempHtml = tempnam(sys_get_temp_dir(), 'doc_html_').'.html';
+            file_put_contents($tempHtml, $html);
+
+            $dir = dirname($outputPath);
+            if (! is_dir($dir)) {
+                @mkdir($dir, 0755, true);
+            }
+
+            $cmd = sprintf(
+                '%s --headless --disable-gpu --no-sandbox --no-pdf-header-footer --print-to-pdf=%s %s 2>&1',
+                escapeshellcmd($chromeBin),
+                escapeshellarg($outputPath),
+                escapeshellarg('file://'.$tempHtml)
+            );
+
+            exec($cmd, $output, $returnCode);
+
+            if (file_exists($tempHtml)) {
+                @unlink($tempHtml);
+            }
+
+            if ($returnCode === 0 && file_exists($outputPath) && filesize($outputPath) > 0) {
+                return true;
+            }
+        }
+
+        // Fallback to DomPDF
+        try {
+            $dir = dirname($outputPath);
+            if (! is_dir($dir)) {
+                @mkdir($dir, 0755, true);
+            }
+            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'portrait');
+            $pdf->save($outputPath);
+
+            return file_exists($outputPath) && filesize($outputPath) > 0;
+        } catch (Throwable) {
+            return false;
+        }
+    }
 }

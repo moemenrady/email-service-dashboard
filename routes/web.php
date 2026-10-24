@@ -5,6 +5,8 @@ use App\Http\Controllers\DomainController;
 use App\Http\Controllers\EmailAccountController;
 use App\Http\Controllers\ForwarderController;
 use App\Http\Controllers\ProfileController;
+use App\Services\DocumentPdfService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Entrance: strictly redirect to login if guest, or role-based dashboard if authenticated
@@ -67,5 +69,28 @@ Route::middleware(['auth', 'domain.auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Official Moemen Team Handover Documents (Arabic & English)
+Route::get('/documents/handover/ar', function (Request $request) {
+    $asDownload = $request->query('download') === '1';
+
+    return DocumentPdfService::render(
+        'documents.handover-ar',
+        ['isPdfMode' => true],
+        'Moemen-Team-Cloud-Email-Handover-AR.pdf',
+        $asDownload
+    );
+})->name('documents.handover.ar');
+
+Route::get('/documents/handover/en', function (Request $request) {
+    $asDownload = $request->query('download') === '1';
+
+    return DocumentPdfService::render(
+        'documents.handover-en',
+        ['isPdfMode' => true],
+        'Moemen-Team-Cloud-Email-Handover-EN.pdf',
+        $asDownload
+    );
+})->name('documents.handover.en');
 
 require __DIR__.'/auth.php';
