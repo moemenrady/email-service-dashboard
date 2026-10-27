@@ -93,4 +93,16 @@ Route::get('/documents/handover/en', function (Request $request) {
     );
 })->name('documents.handover.en');
 
+// Official Single-Page Technical Handover Contract & Certificate
+Route::get('/documents/technical-handover', function (Request $request) {
+    $asDownload = $request->query('download') === '1';
+
+    return DocumentPdfService::render(
+        'documents.technical-handover',
+        ['isPdfMode' => true],
+        'Moemen-Team-Technical-Handover-Certificate.pdf',
+        $asDownload
+    );
+})->name('documents.technical-handover');
+
 require __DIR__.'/auth.php';
