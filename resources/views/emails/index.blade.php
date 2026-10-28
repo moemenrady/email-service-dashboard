@@ -59,26 +59,33 @@
                 $dispatch('open-modal', 'export-email-modal');
             }
         },
-        copyToClipboard(text, msg = 'تم النسخ بنجاح!') {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(msg);
-            });
-        },
-        copyEmployeeShare(username, password) {
+        shareAccountPdf(username, pass) {
+            if (!pass) {
+                this.exportUser = username;
+                this.exportPassword = '';
+                $dispatch('open-modal', 'export-email-modal');
+                return;
+            }
+
             const domain = '{{ $activeDomain }}';
             const email = username + '@' + domain;
-            const passStr = password ? password : '(كلمة المرور المحددة عند الإنشاء)';
-            const text = `✨ بيانات الحساب البريدي للموظف - {{ config('app.name', 'email-service-dashboard') }} ✨\n\n` +
-                `مرحباً بك، إليك بيانات حسابك البريدي الرسمي:\n` +
-                `📧 البريد الإلكتروني: ${email}\n` +
-                `👤 اسم المستخدم للدخول: ${email}\n` +
-                `🔑 كلمة المرور: ${passStr}\n\n` +
-                `🌐 رابط بريد الويب المباشر (Webmail):\nhttps://mail.albrolosy.com/\n\n` +
-                `📱 إعدادات الربط على الهواتف (iPhone & Android):\n` +
-                `• خادم البريد الوارد (IMAP): mail.albrolosy.com (Port: 993, SSL)\n` +
-                `• خادم البريد الصادر (SMTP): mail.albrolosy.com (Port: 465, SSL)\n\n` +
-                `تحياتنا،\nفريق مؤمن للتطوير البرمجي • Moemen Team`;
-            this.copyToClipboard(text, 'تم نسخ رسالة بيانات البريد للموظف بنجاح! يمكنك إرسالها له الآن.');
+            const pdfUrl = '{{ url("emails") }}/' + encodeURIComponent(username) + '/export-pdf?password=' + encodeURIComponent(pass);
+
+            const shareData = {
+                title: 'بطاقة اعتماد الحساب البريدي — ' + email,
+                text: 'بطاقة اعتماد الحساب البريدي الرسمي للموظف (' + email + ') الصادرة والمعتمدة رسمياً من Moemen Team (PDF):',
+                url: pdfUrl
+            };
+
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                navigator.share(shareData).catch((err) => {
+                    if (err.name !== 'AbortError') {
+                        window.open(pdfUrl, '_blank');
+                    }
+                });
+            } else {
+                window.open(pdfUrl, '_blank');
+            }
         },
         openEdit(email) {
             this.editUser = email.username;
@@ -111,17 +118,19 @@
                             <h3 class="text-lg font-black text-emerald-400">تم إنشاء صندوق البريد بنجاح!</h3>
                         </div>
                         <p class="text-xs text-gray-300">
-                            تم تجهيز الصندوق البريدي <strong class="text-white font-mono" dir="ltr">{{ $newBox['email'] }}</strong>، يمكنك نسخ البيانات فوراً للموظف أو تحميل بطاقته PDF.
+                            تم تجهيز الصندوق البريدي <strong class="text-white font-mono" dir="ltr">{{ $newBox['email'] }}</strong>، يمكنك مشاركة بطاقة الحساب الرسمية (PDF) للموظف أو تحميلها فوراً.
                         </p>
                     </div>
 
                     <div class="flex items-center gap-2 flex-wrap">
-                        <button type="button" @click="copyEmployeeShare('{{ $newBox['username'] }}', '{{ $newBox['password'] }}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 transition transform active:scale-95">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                            <span>نسخ بيانات البريد للموظف</span>
+                        <button type="button" @click="shareAccountPdf('{{ $newBox['username'] }}', '{{ $newBox['password'] }}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 transition transform active:scale-95" title="مشاركة بطاقة الحساب الرسمية (PDF) للموظف">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                            <span>مشاركة بيانات الحساب (PDF)</span>
                         </button>
 
-                        <a href="{{ route('emails.export-single-pdf', ['user' => $newBox['username'], 'password' => $newBox['password']]) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#374A3C] hover:bg-[#506055] text-white border border-[#506055]/50 transition">
+                        <a href="{{ route('emails.export-single-pdf', ['user' => $newBox['username'], 'password' => $newBox['password']]) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#374A3C] hover:bg-[#506055] text-white border border-[#506055]/50 transition shadow-sm" title="تحميل ملف PDF رسمي يحتوي على بيانات الدخول المعتمدة للموظف">
                             <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             <span>تحميل بطاقة الحساب (PDF)</span>
                         </a>
@@ -206,7 +215,7 @@
                         </span>
                     </h3>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        يمكنك إنشاء، نسخ بيانات البريد للموظف فوراً، تصدير بطاقة الحساب PDF، وتعديل كلمات المرور
+                        يمكنك إنشاء، مشاركة بطاقة الحساب الرسمية (PDF) للموظف، وتعديل كلمات المرور والحصص
                     </p>
                 </div>
 
@@ -224,7 +233,7 @@
                             <th scope="col" class="px-6 py-4">المساحة التخزينية (Quota)</th>
                             <th scope="col" class="px-6 py-4">حد الإرسال اليومي</th>
                             <th scope="col" class="px-6 py-4">الحالة</th>
-                            <th scope="col" class="px-6 py-4 text-left">الإجراءات والخيارات</th>
+                            <th scope="col" class="px-6 py-4 text-left">بيانات الدخول والإجراءات</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-[#374A3C]">
@@ -274,15 +283,26 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-left">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <!-- Export Single Account Card PDF (with User & Password) -->
-                                        <button type="button" @click="openExport('{{ $email['username'] }}', '{{ $savedPass }}')" class="p-2 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition" title="تصدير بطاقة الحساب وكلمة المرور (PDF)">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <!-- Primary Button: Share Account PDF (Official Moemen Team Document) -->
+                                        <button type="button"
+                                                @click="shareAccountPdf('{{ $email['username'] }}', '{{ $savedPass }}')"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-600 text-emerald-600 dark:text-emerald-400 hover:text-white border border-emerald-500/30 hover:border-emerald-600 shadow-sm transition-all duration-200 group active:scale-95"
+                                                title="مشاركة بطاقة اعتماد الحساب الرسمية (PDF) للموظف عبر التطبيقات والروابط">
+                                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                            </svg>
+                                            <span>مشاركة بيانات الحساب (PDF)</span>
                                         </button>
 
-                                        <!-- 1-Click Copy Employee Credentials Message -->
-                                        <button type="button" @click="copyEmployeeShare('{{ $email['username'] }}', '{{ $savedPass }}')" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition" title="نسخ بيانات الدخول للموظف (واتساب / إيميل)">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        <!-- Download/Export PDF Button -->
+                                        <button type="button"
+                                                @click="openExport('{{ $email['username'] }}', '{{ $savedPass }}')"
+                                                class="p-2 text-gray-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition"
+                                                title="تحميل بطاقة الحساب (PDF) المعتمدة">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
                                         </button>
 
                                         <!-- Edit -->
@@ -498,7 +518,7 @@
     <x-modal name="export-email-modal" focusable>
         <form :action="'{{ url('emails') }}/' + exportUser + '/export-pdf'" method="GET" target="_blank" class="p-6 text-right">
             <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <span>📄 تصدير بطاقة اعتماد الحساب (PDF)</span>
+                <span>📄 تصدير ملف بيانات الدخول للمستخدم (PDF)</span>
             </h2>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 الحساب: <span class="font-bold font-mono text-emerald-500" x-text="exportUser + '@{{ $activeDomain }}'"></span>
@@ -507,11 +527,11 @@
             <div class="mt-5 space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-1">
-                        كلمة المرور الخاصة بالحساب (لتظهر واضحة للموظف في البطاقة المطبوعة):
+                        كلمة المرور الخاصة بالحساب (لتظهر واضحة وسهلة النسخ للموظف في الملف الرسمي):
                     </label>
                     <input type="text" name="password" x-model="exportPassword" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#374A3C] bg-gray-50 dark:bg-[#141B17] text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="أدخل كلمة المرور الحالية للحساب" />
                     <p class="text-[11px] text-gray-400 mt-1">
-                        سيتم حفظ كلمة المرور مشفرة بأمان وتضمينها بشكل واضح في ملف الـ PDF الرسمي للموظف.
+                        سيتم حفظ كلمة المرور مشفرة بأمان وتضمينها بشكل واضح وسهل النسخ في ملف الـ PDF الرسمي للموظف.
                     </p>
                 </div>
             </div>
@@ -522,7 +542,7 @@
                 </button>
                 <button type="submit" @click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md transition inline-flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span>تصدير وتحميل البطاقة الرسمية</span>
+                    <span>تصدير وتحميل ملف بيانات الدخول (PDF)</span>
                 </button>
             </div>
         </form>

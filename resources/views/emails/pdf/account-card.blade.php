@@ -14,7 +14,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 12mm 15mm 12mm 15mm;
+            margin: 10mm 14mm 10mm 14mm;
         }
 
         * {
@@ -24,11 +24,11 @@
         }
 
         body {
-            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, Arial, sans-serif;
             direction: rtl;
             text-align: right;
             margin: 0;
-            padding: 24px;
+            padding: 8px 14px;
             background-color: #FFFFFF;
             color: #111827;
             font-size: 12px;
@@ -106,8 +106,8 @@
             justify-content: space-between;
             align-items: flex-start;
             border-bottom: 2px solid #111827;
-            padding-bottom: 14px;
-            margin-bottom: 24px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .brand-block {
@@ -173,7 +173,7 @@
 
         /* Sections */
         .section {
-            margin-bottom: 22px;
+            margin-bottom: 10px;
         }
 
         .section-title {
@@ -210,54 +210,169 @@
             font-weight: 700;
         }
 
-        /* 3 Summary Stat Cards */
-        .stats-grid {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 22px;
+        /* Selectable Credentials Styling - Engineered for seamless copy-paste */
+        .selectable-credential {
+            user-select: all !important;
+            -webkit-user-select: all !important;
+            -moz-user-select: all !important;
+            direction: ltr !important;
+            text-align: left !important;
+            unicode-bidi: isolate !important;
+            letter-spacing: normal !important;
+            word-spacing: normal !important;
+            font-family: 'Consolas', 'Courier New', 'Liberation Mono', 'Menlo', monospace !important;
+            font-feature-settings: "liga" 0 !important;
+            cursor: text;
         }
 
-        .stat-card {
-            flex: 1;
-            border: 1px solid #E5E7EB;
-            border-radius: 10px;
-            background-color: #FAFAFA;
-            padding: 14px 12px;
-            text-align: center;
-        }
-
-        .stat-card.primary {
-            border-color: #6EE7B7;
-            background-color: #F0FDF4;
-        }
-
-        .stat-label {
+        .inline-code {
+            font-family: 'Consolas', 'Courier New', 'Liberation Mono', monospace !important;
+            background-color: #F3F4F6;
+            border: 1px solid #CBD5E1;
+            border-radius: 4px;
+            padding: 2px 7px;
             font-size: 11px;
-            color: #6B7280;
-            font-weight: 600;
-            margin-bottom: 4px;
+            font-weight: 700;
+            color: #111827;
+            direction: ltr !important;
+            text-align: left !important;
+            unicode-bidi: isolate !important;
+            user-select: all !important;
+            -webkit-user-select: all !important;
+            letter-spacing: normal !important;
+            display: inline-block;
         }
 
-        .stat-val {
-            font-size: 18px;
+        /* Dedicated Official Credentials Box */
+        .cred-box {
+            border: 1.5px solid #10B981;
+            border-radius: 10px;
+            background-color: #F0FDF4;
+            padding: 8px 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .cred-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #A7F3D0;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cred-box-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #065F46;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cred-box-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: #047857;
+            background-color: #D1FAE5;
+            border: 1px solid #6EE7B7;
+            padding: 2px 8px;
+            border-radius: 9999px;
+        }
+
+        .cred-row {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 5px 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cred-row.cred-row-pass {
+            border-color: #6EE7B7;
+            background-color: #FAFEFD;
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.08);
+        }
+
+        .cred-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        .cred-title {
+            font-size: 11.5px;
             font-weight: 800;
             color: #111827;
         }
 
-        .stat-val.highlight {
-            color: #047857;
-            font-family: monospace;
-            font-size: 18px;
-            letter-spacing: 0.5px;
+        .cred-desc {
+            font-size: 9.5px;
+            color: #6B7280;
+            margin-top: 1px;
         }
 
-        /* Highlight box for credentials */
-        .cred-box {
-            background-color: #F9FAFB;
-            border: 1px solid #E5E7EB;
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 20px;
+        .cred-action-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cred-field {
+            background-color: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            padding: 6px 12px;
+            min-width: 280px;
+            text-align: left;
+        }
+
+        .cred-row-pass .cred-field {
+            background-color: #ECFDF5;
+            border-color: #A7F3D0;
+        }
+
+        .cred-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0F172A;
+            display: block;
+        }
+
+        .cred-val-pass {
+            color: #047857;
+            font-size: 14.5px;
+            font-weight: 800;
+        }
+
+        .cred-val-link {
+            color: #059669;
+            text-decoration: underline;
+        }
+
+        .cred-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background-color: #10B981;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Cairo', 'Noto Sans Arabic', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .cred-copy-btn:hover {
+            background-color: #059669;
         }
 
         /* Settings Table */
@@ -274,14 +389,14 @@
         .data-table th {
             background-color: #F9FAFB;
             color: #374151;
-            padding: 9px 12px;
+            padding: 5px 10px;
             font-weight: 700;
             border-bottom: 1px solid #E5E7EB;
             text-align: right;
         }
 
         .data-table td {
-            padding: 9px 12px;
+            padding: 5px 10px;
             border-bottom: 1px solid #F3F4F6;
             color: #1F2937;
         }
@@ -304,23 +419,23 @@
             background-color: #F8FAFC;
             border: 1px solid #E2E8F0;
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 7px 12px;
             font-size: 11px;
             color: #334155;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .steps-box ol {
-            margin: 4px 0 0 0;
+            margin: 2px 0 0 0;
             padding-right: 18px;
-            line-height: 1.7;
+            line-height: 1.5;
         }
 
         /* Verification & Stamp Footer (Page bottom) */
         .verification-footer {
-            margin-top: 30px;
+            margin-top: 10px;
             border-top: 1px solid #E5E7EB;
-            padding-top: 16px;
+            padding-top: 8px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
@@ -374,18 +489,19 @@
         }
 
         .doc-bottom-bar {
-            margin-top: 20px;
+            margin-top: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 9px;
             color: #9CA3AF;
             border-top: 1px dashed #E5E7EB;
-            padding-top: 8px;
+            padding-top: 6px;
         }
 
         @media print {
-            .toolbar-no-print {
+            .toolbar-no-print,
+            .interactive-only {
                 display: none !important;
             }
             body.has-toolbar {
@@ -396,7 +512,7 @@
             }
             @page {
                 size: A4 portrait;
-                margin: 12mm 15mm 12mm 15mm;
+                margin: 10mm 14mm 10mm 14mm;
             }
         }
     </style>
@@ -450,7 +566,7 @@
                     <td class="kv-label">اسم المشروع / النطاق:</td>
                     <td class="kv-val" dir="ltr" style="text-align: right;">{{ $domain }}</td>
                     <td class="kv-label">اسم المستخدم للدخول:</td>
-                    <td class="kv-val" dir="ltr" style="text-align: right;">{{ $username }}</td>
+                    <td class="kv-val" dir="ltr" style="text-align: right;"><code class="inline-code" dir="ltr">{{ $emailAddress }}</code></td>
                 </tr>
                 <tr>
                     <td class="kv-label">الجهة / الشركة التابع لها:</td>
@@ -472,20 +588,63 @@
             </table>
         </div>
 
-        <!-- 3 Highlight / Stat Cards (Direct Visual Access) -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">عنوان البريد الإلكتروني</div>
-                <div class="stat-val" dir="ltr" style="font-size: 14px; font-family: monospace;">{{ $emailAddress }}</div>
+        <!-- Section: Dedicated Official Login Credentials (Engineered for effortless copy-pasting) -->
+        <div class="cred-box">
+            <div class="cred-box-header">
+                <div class="cred-box-title">
+                    <span>🔑</span>
+                    <span>بيانات الاعتماد وتسجيل الدخول الرسمية (Official Credentials)</span>
+                </div>
+                <div class="cred-box-badge">
+                    مخصصة للاستخدام والنسخ المباشر
+                </div>
             </div>
-            <div class="stat-card primary">
-                <div class="stat-label">كلمة المرور المعتمدة للدخول</div>
-                <div class="stat-val highlight" dir="ltr">{{ $plainPassword }}</div>
+
+            <!-- Email Address & Login Username -->
+            <div class="cred-row">
+                <div class="cred-info">
+                    <div class="cred-title">عنوان البريد الإلكتروني / اسم الدخول (Email Address & Login Username):</div>
+                    <div class="cred-desc">يُستخدم هذا البريد كاملاً كاسم مستخدم (Username) عند تسجيل الدخول أو إعداد البرامج والتطبيقات.</div>
+                </div>
+                <div class="cred-action-wrap">
+                    <div class="cred-field">
+                        <span class="cred-val selectable-credential" dir="ltr">{{ $emailAddress }}</span>
+                    </div>
+                    <button type="button" class="cred-copy-btn interactive-only" onclick="copyCred('{{ $emailAddress }}', this)" title="نسخ البريد الإلكتروني">
+                        <span>📋 نسخ البريد</span>
+                    </button>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">رابط بريد الويب (Webmail)</div>
-                <div class="stat-val" style="font-size: 13px;">
-                    <a href="{{ $webmailUrl }}" target="_blank" dir="ltr" style="color: #059669; text-decoration: underline;">mail.albrolosy.com</a>
+
+            <!-- Official Password -->
+            <div class="cred-row cred-row-pass">
+                <div class="cred-info">
+                    <div class="cred-title">كلمة المرور الرسمية المعتمدة للدخول (Account Password):</div>
+                    <div class="cred-desc">كلمة المرور مشفرة ومطابقة لسجلات الخادم. حساسة للأحرف الكبيرة والصغيرة (Case-Sensitive).</div>
+                </div>
+                <div class="cred-action-wrap">
+                    <div class="cred-field">
+                        <span class="cred-val cred-val-pass selectable-credential" dir="ltr">{{ $plainPassword }}</span>
+                    </div>
+                    <button type="button" class="cred-copy-btn interactive-only" onclick="copyCred('{{ $plainPassword }}', this)" title="نسخ كلمة المرور">
+                        <span>📋 نسخ كلمة المرور</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Webmail URL -->
+            <div class="cred-row">
+                <div class="cred-info">
+                    <div class="cred-title">رابط بريد الويب المباشر (Direct Webmail Access):</div>
+                    <div class="cred-desc">لتسجيل الدخول السريع عبر أي متصفح إنترنت (Google Chrome, Safari, Edge) دون الحاجة لبرامج.</div>
+                </div>
+                <div class="cred-action-wrap">
+                    <div class="cred-field">
+                        <a href="{{ $webmailUrl }}" target="_blank" class="cred-val cred-val-link selectable-credential" dir="ltr">{{ $webmailUrl }}</a>
+                    </div>
+                    <button type="button" class="cred-copy-btn interactive-only" onclick="copyCred('{{ $webmailUrl }}', this)" title="نسخ الرابط">
+                        <span>📋 نسخ الرابط</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -520,7 +679,7 @@
                     <tr>
                         <td><strong>بيانات تسجيل الدخول للربط</strong></td>
                         <td colspan="3">
-                            اسم المستخدم: <strong dir="ltr">{{ $emailAddress }}</strong> • كلمة المرور: <strong dir="ltr">{{ $plainPassword }}</strong> (مطلوب تفعيل المصادقة)
+                            اسم المستخدم: <code class="inline-code" dir="ltr">{{ $emailAddress }}</code> &bull; كلمة المرور: <code class="inline-code" dir="ltr">{{ $plainPassword }}</code> <span style="color: #6B7280; font-size: 10px; margin-right: 6px;">(مطلوب تفعيل المصادقة / Authentication Required)</span>
                         </td>
                     </tr>
                 </tbody>
@@ -567,5 +726,46 @@
         </div>
     </div>
 
+    <script>
+        function copyCred(text, btn) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    var orig = btn.innerHTML;
+                    btn.innerHTML = '<span>✓ تم النسخ!</span>';
+                    btn.style.backgroundColor = '#059669';
+                    setTimeout(function() {
+                        btn.innerHTML = orig;
+                        btn.style.backgroundColor = '';
+                    }, 2000);
+                }).catch(function() {
+                    fallbackCopy(text, btn);
+                });
+            } else {
+                fallbackCopy(text, btn);
+            }
+        }
+
+        function fallbackCopy(text, btn) {
+            var input = document.createElement('textarea');
+            input.value = text;
+            input.style.position = 'fixed';
+            input.style.opacity = '0';
+            document.body.appendChild(input);
+            input.select();
+            try {
+                document.execCommand('copy');
+                var orig = btn.innerHTML;
+                btn.innerHTML = '<span>✓ تم النسخ!</span>';
+                btn.style.backgroundColor = '#059669';
+                setTimeout(function() {
+                    btn.innerHTML = orig;
+                    btn.style.backgroundColor = '';
+                }, 2000);
+            } catch (err) {
+                prompt('انسخ البيانات يدوياً:', text);
+            }
+            document.body.removeChild(input);
+        }
+    </script>
 </body>
 </html>

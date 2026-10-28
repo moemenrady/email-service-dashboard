@@ -88,9 +88,9 @@
                     <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-black text-sm">
                         2
                     </div>
-                    <h4 class="font-bold text-sm text-gray-900 dark:text-white">نسخ البيانات أو تصدير PDF</h4>
+                    <h4 class="font-bold text-sm text-gray-900 dark:text-white">مشاركة أو تحميل بطاقة الحساب (PDF)</h4>
                     <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                        بمجرد الضغط على زر الحفظ، ستظهر نافذة منبثقة تحتوي على زر <strong>📋 نسخ بيانات البريد للموظف</strong> وكذلك زر <strong>📄 تحميل بطاقة الحساب PDF</strong>. كما يمكنك النقر على زر النسخ أو التصدير بجانب أي حساب في الجدول في أي وقت.
+                        بمجرد الضغط على زر الحفظ، ستظهر نافذة منبثقة تحتوي على زر <strong>🔗 مشاركة بيانات الحساب (PDF)</strong> وكذلك زر <strong>📄 تحميل بطاقة الحساب (PDF)</strong>. كما يمكنك النقر على زر <strong>مشاركة بيانات الحساب (PDF)</strong> البارز بجانب أي حساب في الجدول في أي وقت لتسليم الموظف بطاقة اعتماد رسمية من Moemen Team.
                     </p>
                 </div>
 
@@ -99,9 +99,9 @@
                     <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-black text-sm">
                         3
                     </div>
-                    <h4 class="font-bold text-sm text-gray-900 dark:text-white">الإرسال الفوري للموظف</h4>
+                    <h4 class="font-bold text-sm text-gray-900 dark:text-white">الإرسال الفوري لبطاقة الـ PDF</h4>
                     <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                        افتح محادثة الواتساب أو التلجرام أو أرسل رسالة للموظف، واعمل <strong>لصق (Paste)</strong>؛ سيصل للموظف قالب رسالة احترافي ومرتب باسم شركتك يحتوي على بريده، كلمة المرور، ورابط بريد الويب المباشر <span class="font-mono text-emerald-400">https://mail.albrolosy.com/</span> لفتح حسابه فوراً!
+                        عبر زر المشاركة، يمكنك إرسال بطاقة الاعتماد الرسمية للموظف مباشرة عبر واتساب أو البريد، أو تنزيل ملف الـ PDF الرسمي ليحتفظ به كمرجع دائم يشمل بريده، كلمة المرور المعتمدة، رابط بريد الويب المباشر <span class="font-mono text-emerald-400">https://mail.albrolosy.com/</span>، وإعدادات الربط بالهواتف.
                     </p>
                 </div>
             </div>
