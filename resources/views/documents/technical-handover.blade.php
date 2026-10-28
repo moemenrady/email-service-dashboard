@@ -408,23 +408,18 @@
             flex: 1.1;
             display: flex;
             flex-direction: column;
-            gap: 3.5px;
+            gap: 6px;
             justify-content: center;
         }
 
         .video-link-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 4px;
-            padding: 2px 6px;
-        }
-
-        .video-link-item.official-pdf-row {
-            background: #ECFDF5;
-            border-color: #A7F3D0;
+            border: 1px solid #CBD5E1;
+            border-radius: 5px;
+            padding: 4px 7px;
         }
 
         .vid-icon {
@@ -812,7 +807,7 @@
                     </div>
                 </div>
 
-                <!-- Left: Video links & Document -->
+                <!-- Left: Video links -->
                 <div class="start-videos-col">
                     <div class="video-link-item">
                         <span class="vid-icon">🎬</span>
@@ -829,15 +824,6 @@
                             <span class="vid-title">شرح الاستخدام والربط على Outlook:</span>
                             <a href="https://drive.google.com/file/d/1gddBAA2Del_YsvwGEVt4njAJrvzmS5Xl/view?usp=drivesdk" target="_blank" class="vid-btn">
                                 مشاهدة فيديو الشرح &larr;
-                            </a>
-                        </div>
-                    </div>
-                    <div class="video-link-item official-pdf-row">
-                        <span class="vid-icon">📄</span>
-                        <div class="vid-info">
-                            <span class="vid-title">وثيقة التسليم الرسمية الشاملة:</span>
-                            <a href="https://email-service.moemen-team.tech/documents/Moemen-Team-Cloud-Email-Handover-AR.pdf" target="_blank" class="vid-btn pdf-btn">
-                                تحميل الوثيقة (PDF) &larr;
                             </a>
                         </div>
                     </div>
