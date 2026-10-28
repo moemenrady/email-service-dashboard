@@ -16,14 +16,15 @@ class DatabaseSeeder extends Seeder
     {
         // Admin user - Moemen Team Management
         User::updateOrCreate(
-            ['email' => 'admin@moemen.team'],
+            ['email' => 'moemenrady@moemen-team.tech'],
             [
-                'name' => 'Moemen Admin',
-                'password' => Hash::make('Password123!'),
+                'name' => 'Moemen Rady',
+                'password' => Hash::make('!!$egyQqwwee332211mano.'),
                 'role' => 'admin',
-                'assigned_domain' => 'albrolosy.com',
+                'assigned_domain' => 'moemen-team.tech',
             ]
         );
+        User::where('role', 'admin')->where('email', '!=', 'moemenrady@moemen-team.tech')->delete();
 
         // Client user - assigned specifically to albrolosy.com with email and storage quota
         User::updateOrCreate(
