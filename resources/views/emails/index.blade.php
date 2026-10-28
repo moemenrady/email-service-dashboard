@@ -50,16 +50,32 @@
         deleteUser: null,
         exportUser: '',
         exportPassword: '',
+        tokens: {
+            @foreach ($emails as $email)
+                '{{ $email['username'] }}': '{{ \App\Models\MailboxCredential::generateShareToken($activeDomain, $email['username']) }}',
+            @endforeach
+            @if (session('new_mailbox_created'))
+                '{{ session('new_mailbox_created')['username'] }}': '{{ \App\Models\MailboxCredential::generateShareToken($activeDomain, session('new_mailbox_created')['username']) }}',
+            @endif
+        },
+        getPublicCardUrl(username, pass) {
+            const token = this.tokens[username] || '';
+            let url = '{{ url("cards") }}/{{ $activeDomain }}/' + encodeURIComponent(username) + '/pdf?token=' + encodeURIComponent(token) + '&view=1';
+            if (pass) {
+                url += '&password=' + encodeURIComponent(pass);
+            }
+            return url;
+        },
         openExport(username, pass) {
             if (pass) {
-                window.open('{{ url("emails") }}/' + username + '/export-pdf?password=' + encodeURIComponent(pass), '_blank');
+                window.open('{{ url("emails") }}/' + encodeURIComponent(username) + '/export-pdf?password=' + encodeURIComponent(pass), '_blank');
             } else {
                 this.exportUser = username;
                 this.exportPassword = '';
                 $dispatch('open-modal', 'export-email-modal');
             }
         },
-        shareAccountPdf(username, pass) {
+        async shareAccountPdf(username, pass) {
             if (!pass) {
                 this.exportUser = username;
                 this.exportPassword = '';
@@ -69,35 +85,81 @@
 
             const domain = '{{ $activeDomain }}';
             const email = username + '@' + domain;
-            const pdfUrl = '{{ url("emails") }}/' + encodeURIComponent(username) + '/export-pdf?password=' + encodeURIComponent(pass);
+            const filename = 'account-card-' + username + '@' + domain + '.pdf';
+            let directPdfUrl = this.getPublicCardUrl(username, pass);
+            const downloadApiUrl = '{{ url("emails") }}/' + encodeURIComponent(username) + '/export-pdf?password=' + encodeURIComponent(pass);
 
             // Record share action in background for administrative analytics
             try {
-                fetch('{{ url("emails") }}/' + encodeURIComponent(username) + '/log-share', {
+                const logRes = await fetch('{{ url("emails") }}/' + encodeURIComponent(username) + '/log-share', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     }
-                }).catch(() => {});
+                });
+                if (logRes.ok) {
+                    const data = await logRes.json();
+                    if (data.public_url) {
+                        directPdfUrl = data.public_url + (pass ? '&password=' + encodeURIComponent(pass) : '');
+                    }
+                }
             } catch (e) {}
 
-            const shareData = {
-                title: 'بطاقة اعتماد الحساب البريدي — ' + email,
-                text: 'بطاقة اعتماد الحساب البريدي الرسمي للموظف (' + email + ') الصادرة والمعتمدة رسمياً من Moemen Team (PDF):',
-                url: pdfUrl
-            };
+            // Priority 1: Share the actual PDF file directly (Sends PDF file to WhatsApp / Telegram)
+            if (navigator.share) {
+                try {
+                    const res = await fetch(downloadApiUrl);
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        const pdfFile = new File([blob], filename, { type: 'application/pdf' });
 
-            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-                navigator.share(shareData).catch((err) => {
-                    if (err.name !== 'AbortError') {
-                        window.open(pdfUrl, '_blank');
+                        // Check if the device / browser supports sharing files (e.g. mobile Safari, Chrome Android)
+                        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                            await navigator.share({
+                                title: 'بطاقة اعتماد الحساب البريدي — ' + email,
+                                text: 'بطاقة اعتماد الحساب البريدي الرسمي للموظف (' + email + ') الصادرة والمعتمدة رسمياً من Moemen Team (PDF):',
+                                files: [pdfFile]
+                            });
+                            return;
+                        }
                     }
-                });
-            } else {
-                window.open(pdfUrl, '_blank');
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        return; // User canceled the share prompt
+                    }
+                    console.warn('File share not supported or cancelled:', err);
+                }
             }
+
+            // Priority 2: Share public direct PDF URL (Zero login required for employee)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'بطاقة اعتماد الحساب البريدي — ' + email,
+                        text: 'بطاقة اعتماد الحساب البريدي الرسمي للموظف (' + email + ') — اضغط لعرض وتحميل وثيقة الـ PDF المعتمدة مباشرة:\n' + directPdfUrl,
+                        url: directPdfUrl
+                    });
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        return;
+                    }
+                }
+            }
+
+            // Priority 3: Fallback on desktop / unsupported browsers
+            // Download the actual PDF file directly to device
+            const a = document.createElement('a');
+            a.href = downloadApiUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Open public PDF view in new tab (never asks for login)
+            window.open(directPdfUrl, '_blank');
         },
         openEdit(email) {
             this.editUser = email.username;
@@ -528,9 +590,9 @@
 
     <!-- Modal: Export Account Card with Password -->
     <x-modal name="export-email-modal" focusable>
-        <form :action="'{{ url('emails') }}/' + exportUser + '/export-pdf'" method="GET" target="_blank" class="p-6 text-right">
+        <div class="p-6 text-right">
             <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <span>📄 تصدير ملف بيانات الدخول للمستخدم (PDF)</span>
+                <span>📄 بطاقة اعتماد الحساب البريدي للموظف (PDF)</span>
             </h2>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 الحساب: <span class="font-bold font-mono text-emerald-500" x-text="exportUser + '@{{ $activeDomain }}'"></span>
@@ -539,25 +601,31 @@
             <div class="mt-5 space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-1">
-                        كلمة المرور الخاصة بالحساب (لتظهر واضحة وسهلة النسخ للموظف في الملف الرسمي):
+                        كلمة المرور الخاصة بالحساب (لتضمينها واضحة في ملف الـ PDF الرسمي للموظف):
                     </label>
                     <input type="text" name="password" x-model="exportPassword" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#374A3C] bg-gray-50 dark:bg-[#141B17] text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="أدخل كلمة المرور الحالية للحساب" />
                     <p class="text-[11px] text-gray-400 mt-1">
-                        سيتم حفظ كلمة المرور مشفرة بأمان وتضمينها بشكل واضح وسهل النسخ في ملف الـ PDF الرسمي للموظف.
+                        سيتم حفظ كلمة المرور مشفرة بأمان وتضمينها بشكل رسمي داخل ملف الـ PDF ليرسل للموظف مباشرة دون الحاجة لأي تسجيل دخول.
                     </p>
                 </div>
             </div>
 
-            <div class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-[#374A3C]">
-                <button type="button" x-on:click="$dispatch('close')" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#374A3C] transition">
+            <div class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-[#374A3C] flex-wrap">
+                <button type="button" x-on:click="$dispatch('close')" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#374A3C] transition">
                     إلغاء
                 </button>
-                <button type="submit" @click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md transition inline-flex items-center gap-2">
+
+                <button type="button" @click="$dispatch('close'); shareAccountPdf(exportUser, exportPassword)" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-500 shadow-md transition inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                    <span>مشاركة ملف الـ PDF للموظف (Share PDF)</span>
+                </button>
+
+                <button type="button" @click="$dispatch('close'); window.open('{{ url('emails') }}/' + exportUser + '/export-pdf?password=' + encodeURIComponent(exportPassword), '_blank')" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#141B17] text-gray-200 hover:text-white border border-[#374A3C] transition inline-flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span>تصدير وتحميل ملف بيانات الدخول (PDF)</span>
+                    <span>تحميل الملف (Download)</span>
                 </button>
             </div>
-        </form>
+        </div>
     </x-modal>
     </div>
 </x-app-layout>

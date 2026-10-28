@@ -108,4 +108,7 @@ Route::get('/documents/technical-handover', function (Request $request) {
     );
 })->name('documents.technical-handover');
 
+// Public Direct Employee Account Card PDF (No dashboard login required!)
+Route::get('/cards/{domain}/{user}/pdf', [EmailAccountController::class, 'publicCardPdf'])->name('emails.public-card');
+
 require __DIR__.'/auth.php';

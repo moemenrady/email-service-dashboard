@@ -376,6 +376,14 @@ class EmailAccountController extends Controller
         $user = strtolower(trim($user));
         $emailAddress = $user.'@'.$domain;
 
+        $token = MailboxCredential::generateShareToken($domain, $user);
+        $publicUrl = route('emails.public-card', [
+            'domain' => $domain,
+            'user' => $user,
+            'token' => $token,
+            'view' => 1,
+        ]);
+
         ActivityLogger::logPdfShare(
             user: $request->user(),
             email: $emailAddress,
@@ -386,6 +394,8 @@ class EmailAccountController extends Controller
         return response()->json([
             'success' => true,
             'email' => $emailAddress,
+            'token' => $token,
+            'public_url' => $publicUrl,
         ]);
     }
 
@@ -401,5 +411,63 @@ class EmailAccountController extends Controller
             'webmailUrl' => 'https://mail.albrolosy.com/',
             'serverHost' => 'mail.albrolosy.com',
         ]);
+    }
+
+    /**
+     * Public direct download or view of employee account card PDF (No dashboard login required).
+     * Protected by secure HMAC token so employees can view/download without any dashboard interaction.
+     */
+    public function publicCardPdf(Request $request, string $domain, string $user): Response|BinaryFileResponse
+    {
+        $domain = strtolower(trim($domain));
+        $user = strtolower(trim($user));
+        $token = (string) $request->query('token');
+
+        // Security check: Must have valid HMAC share token OR be authenticated
+        if (! auth()->check() && ! MailboxCredential::isValidShareToken($domain, $user, $token)) {
+            abort(403, 'رابط بطاقة الحساب غير مصرح به أو منتهي الصلاحية.');
+        }
+
+        $credential = MailboxCredential::where('domain', $domain)->where('username', $user)->first();
+
+        // Check if password was submitted with request or saved previously
+        if (! empty($request->input('password'))) {
+            $plainPassword = $request->input('password');
+        } else {
+            $plainPassword = $credential?->plain_password ?: 'Info@2026Albrolosy';
+        }
+
+        $emailAddress = $user.'@'.$domain;
+
+        $clientUser = User::where('assigned_domain', $domain)->where('role', 'client')->first();
+
+        $data = [
+            'username' => $user,
+            'domain' => $domain,
+            'emailAddress' => $emailAddress,
+            'plainPassword' => $plainPassword,
+            'quota' => $credential?->quota ?? 2048,
+            'limit' => $credential?->limit ?? 9600,
+            'clientUser' => $clientUser,
+            'serverHost' => 'mail.albrolosy.com',
+            'webmailUrl' => 'https://mail.albrolosy.com/',
+            'generatedAtFormatted' => now()->translatedFormat('d F Y'),
+        ];
+
+        $asDownload = $request->query('view') !== '1' && $request->query('format') !== 'html';
+
+        ActivityLogger::log(
+            actionType: 'pdf_export',
+            actionTitle: "استعراض/تحميل بطاقة اعتماد الحساب (PDF) للبريد [{$emailAddress}]",
+            details: [
+                'email' => $emailAddress,
+                'domain' => $domain,
+                'type' => 'employee_direct_card',
+            ],
+            user: auth()->user(),
+            request: $request
+        );
+
+        return DocumentPdfService::render('emails.pdf.account-card', $data, "account-card-{$user}@{$domain}.pdf", $asDownload);
     }
 }

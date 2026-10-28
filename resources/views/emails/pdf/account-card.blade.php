@@ -534,9 +534,9 @@
                 <a href="{{ request()->fullUrlWithQuery(['download' => 1]) }}" class="toolbar-btn btn-download">
                     <span>📥 تحميل مباشر كملف PDF</span>
                 </a>
-                <a href="{{ route('emails.index') }}" class="toolbar-btn btn-back">
+                <button type="button" onclick="window.close()" class="toolbar-btn btn-back">
                     <span>✕ إغلاق</span>
-                </a>
+                </button>
             </div>
         </div>
     @endif

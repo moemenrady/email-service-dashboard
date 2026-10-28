@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\ActivityLog;
+use App\Models\MailboxCredential;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -292,5 +293,37 @@ class ActivityLogTest extends TestCase
         $this->assertStringContainsString('hr@albrolosy.com', $content);
         $this->assertStringContainsString('إنشاء بريد', $content);
         $this->assertStringContainsString('Firefox 125', $content);
+    }
+
+    public function test_guest_can_access_public_employee_card_with_valid_token_without_login(): void
+    {
+        $domain = 'albrolosy.com';
+        $user = 'sales';
+        $token = MailboxCredential::generateShareToken($domain, $user);
+
+        MailboxCredential::storeOrUpdate(
+            domain: $domain,
+            username: $user,
+            password: 'SalesPassword2026!'
+        );
+
+        // Guest request without any authentication session
+        $response = $this->get("/cards/{$domain}/{$user}/pdf?token={$token}&download=1");
+
+        $response->assertOk();
+        $this->assertFalse($response->isRedirect());
+        $this->assertStringContainsString('account-card-sales@albrolosy.com.pdf', (string) $response->headers->get('Content-Disposition'));
+
+        // Check activity log
+        $this->assertDatabaseHas('activity_logs', [
+            'action_type' => 'pdf_export',
+            'action_title' => 'استعراض/تحميل بطاقة اعتماد الحساب (PDF) للبريد [sales@albrolosy.com]',
+        ]);
+    }
+
+    public function test_guest_cannot_access_public_card_with_invalid_token(): void
+    {
+        $response = $this->get('/cards/albrolosy.com/sales/pdf?token=wrong_token');
+        $response->assertStatus(403);
     }
 }

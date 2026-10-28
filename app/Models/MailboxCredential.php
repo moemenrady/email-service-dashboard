@@ -75,4 +75,27 @@ class MailboxCredential extends Model
 
         return $record;
     }
+
+    /**
+     * Generate secure HMAC share token for this mailbox card.
+     */
+    public static function generateShareToken(string $domain, string $username): string
+    {
+        $domain = strtolower(trim($domain));
+        $username = strtolower(trim($username));
+
+        return substr(hash_hmac('sha256', "card:{$domain}:{$username}", (string) config('app.key')), 0, 32);
+    }
+
+    /**
+     * Validate an HMAC share token.
+     */
+    public static function isValidShareToken(string $domain, string $username, ?string $token): bool
+    {
+        if (empty($token)) {
+            return false;
+        }
+
+        return hash_equals(static::generateShareToken($domain, $username), $token);
+    }
 }
