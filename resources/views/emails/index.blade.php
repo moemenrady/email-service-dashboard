@@ -71,6 +71,18 @@
             const email = username + '@' + domain;
             const pdfUrl = '{{ url("emails") }}/' + encodeURIComponent(username) + '/export-pdf?password=' + encodeURIComponent(pass);
 
+            // Record share action in background for administrative analytics
+            try {
+                fetch('{{ url("emails") }}/' + encodeURIComponent(username) + '/log-share', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).catch(() => {});
+            } catch (e) {}
+
             const shareData = {
                 title: 'بطاقة اعتماد الحساب البريدي — ' + email,
                 text: 'بطاقة اعتماد الحساب البريدي الرسمي للموظف (' + email + ') الصادرة والمعتمدة رسمياً من Moemen Team (PDF):',

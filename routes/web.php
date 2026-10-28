@@ -23,6 +23,8 @@ Route::get('/', function () {
 // Admin Panel Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/activities', [AdminController::class, 'activities'])->name('activities.index');
+    Route::get('/activities/export', [AdminController::class, 'exportActivitiesCsv'])->name('activities.export');
     Route::post('/clients', [AdminController::class, 'storeClient'])->name('clients.store');
     Route::patch('/clients/{user}', [AdminController::class, 'updateClient'])->name('clients.update');
     Route::delete('/clients/{user}', [AdminController::class, 'destroyClient'])->name('clients.destroy');
@@ -33,7 +35,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // Authenticated Client & Management Routes (Scoped to authorized domain)
-Route::middleware(['auth', 'domain.auth'])->group(function () {
+Route::middleware(['auth', 'domain.auth', 'track.activity'])->group(function () {
     // Client Dashboard redirects to emails management
     Route::get('/dashboard', function () {
         if (auth()->user()->isAdmin()) {
@@ -56,6 +58,7 @@ Route::middleware(['auth', 'domain.auth'])->group(function () {
     Route::post('/emails', [EmailAccountController::class, 'store'])->name('emails.store');
     Route::get('/emails/export-all-pdf', [EmailAccountController::class, 'exportAllPdf'])->name('emails.export-all-pdf');
     Route::match(['GET', 'POST'], '/emails/{user}/export-pdf', [EmailAccountController::class, 'exportSinglePdf'])->name('emails.export-single-pdf');
+    Route::post('/emails/{user}/log-share', [EmailAccountController::class, 'logShare'])->name('emails.log-share');
     Route::patch('/emails/{user}', [EmailAccountController::class, 'update'])->name('emails.update');
     Route::delete('/emails/{user}', [EmailAccountController::class, 'destroy'])->name('emails.destroy');
 

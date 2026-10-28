@@ -6,6 +6,7 @@ use App\Exceptions\MxRouteApiException;
 use App\Exceptions\MxRouteRateLimitException;
 use App\Exceptions\MxRouteValidationException;
 use App\Http\Requests\CreateForwarderRequest;
+use App\Services\ActivityLogger;
 use App\Services\MxRouteApiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -54,6 +55,14 @@ class ForwarderController extends Controller
                 destinations: $validated['destinations']
             );
 
+            ActivityLogger::logForwarderCreated(
+                user: $request->user(),
+                alias: $validated['alias'],
+                destinations: $validated['destinations'],
+                domain: $domain,
+                request: $request
+            );
+
             return redirect()->route('forwarders.index')
                 ->with('status', 'forwarder-created')
                 ->with('success', "Forwarder {$validated['alias']}@{$domain} has been created successfully.");
@@ -91,6 +100,13 @@ class ForwarderController extends Controller
 
         try {
             $api->deleteForwarder($domain, $alias);
+
+            ActivityLogger::logForwarderDeleted(
+                user: $request->user(),
+                alias: $alias,
+                domain: $domain,
+                request: $request
+            );
 
             return redirect()->route('forwarders.index')
                 ->with('status', 'forwarder-deleted')

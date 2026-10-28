@@ -9,9 +9,11 @@ use App\Http\Requests\CreateEmailAccountRequest;
 use App\Http\Requests\UpdateEmailAccountRequest;
 use App\Models\MailboxCredential;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\DocumentPdfService;
 use App\Services\MxRouteApiService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -130,6 +132,15 @@ class EmailAccountController extends Controller
                 'webmail_url' => 'https://mail.albrolosy.com/',
             ];
 
+            ActivityLogger::logEmailCreated(
+                user: $request->user(),
+                username: $validated['username'],
+                domain: $domain,
+                quota: (int) ($validated['quota'] ?? 1024),
+                limit: (int) ($validated['limit'] ?? 9600),
+                request: $request
+            );
+
             return redirect()->route('emails.index')
                 ->with('status', 'email-created')
                 ->with('success', "تم إنشاء صندوق البريد {$validated['username']}@{$domain} بنجاح.")
@@ -186,6 +197,16 @@ class EmailAccountController extends Controller
                 );
             }
 
+            ActivityLogger::logEmailUpdated(
+                user: $request->user(),
+                username: $user,
+                domain: $domain,
+                quota: isset($validated['quota']) ? (int) $validated['quota'] : null,
+                limit: isset($validated['limit']) ? (int) $validated['limit'] : null,
+                passwordChanged: ! empty($validated['password']),
+                request: $request
+            );
+
             return redirect()->route('emails.index')
                 ->with('status', 'email-updated')
                 ->with('success', "تم تحديث إعدادات البريد {$user}@{$domain} بنجاح.");
@@ -218,6 +239,13 @@ class EmailAccountController extends Controller
 
             // Clean up credential record
             MailboxCredential::where('domain', $domain)->where('username', $user)->delete();
+
+            ActivityLogger::logEmailDeleted(
+                user: $request->user(),
+                username: $user,
+                domain: $domain,
+                request: $request
+            );
 
             return redirect()->route('emails.index')
                 ->with('status', 'email-deleted')
@@ -273,6 +301,14 @@ class EmailAccountController extends Controller
 
         $asDownload = $request->query('view') !== '1' && $request->query('format') !== 'html';
 
+        ActivityLogger::logPdfExport(
+            user: $request->user(),
+            type: 'all',
+            target: "جميع حسابات نطاق {$domain}",
+            domain: $domain,
+            request: $request
+        );
+
         return DocumentPdfService::render('emails.pdf.accounts-report', $data, "email-accounts-{$domain}.pdf", $asDownload);
     }
 
@@ -320,7 +356,37 @@ class EmailAccountController extends Controller
 
         $asDownload = $request->query('view') !== '1' && $request->query('format') !== 'html';
 
+        ActivityLogger::logPdfExport(
+            user: $request->user(),
+            type: 'single',
+            target: $emailAddress,
+            domain: $domain,
+            request: $request
+        );
+
         return DocumentPdfService::render('emails.pdf.account-card', $data, "account-card-{$user}@{$domain}.pdf", $asDownload);
+    }
+
+    /**
+     * Record a log when a user shares an email account PDF.
+     */
+    public function logShare(Request $request, string $user): JsonResponse
+    {
+        $domain = $request->attributes->get('active_domain') ?? $request->user()->getActiveDomain();
+        $user = strtolower(trim($user));
+        $emailAddress = $user.'@'.$domain;
+
+        ActivityLogger::logPdfShare(
+            user: $request->user(),
+            email: $emailAddress,
+            domain: $domain,
+            request: $request
+        );
+
+        return response()->json([
+            'success' => true,
+            'email' => $emailAddress,
+        ]);
     }
 
     /**

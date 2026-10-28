@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\MxRouteApiException;
+use App\Services\ActivityLogger;
 use App\Services\MxRouteApiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +23,14 @@ class DomainController extends Controller
         }
 
         session(['active_domain' => $domain]);
+
+        ActivityLogger::log(
+            actionType: 'domain_switch',
+            actionTitle: "تبديل النطاق النشط إلى [{$domain}]",
+            details: ['domain' => $domain],
+            user: $request->user(),
+            request: $request
+        );
 
         return redirect()->back()->with('success', "Active domain switched to {$domain}.");
     }

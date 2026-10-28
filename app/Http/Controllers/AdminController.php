@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\MxRouteApiException;
+use App\Models\ActivityLog;
 use App\Models\User;
 use App\Services\DocumentPdfService;
 use App\Services\MxRouteApiService;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -258,5 +260,179 @@ class AdminController extends Controller
         }
 
         return redirect()->route('emails.index')->with('success', "تم تحويل لوحة الإدارة إلى الدومين [{$domain}].");
+    }
+
+    /**
+     * Display administrative activity logs and audit trail with analytics.
+     */
+    public function activities(Request $request): View
+    {
+        $query = ActivityLog::with('user')->latest();
+
+        if ($request->filled('user_id')) {
+            $query->forUser((int) $request->input('user_id'));
+        }
+
+        if ($request->filled('domain')) {
+            $query->forDomain($request->input('domain'));
+        }
+
+        if ($request->filled('action_type') && $request->input('action_type') !== 'all') {
+            $query->actionType($request->input('action_type'));
+        }
+
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
+        }
+
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->dateRange($request->input('date_from'), $request->input('date_to'));
+        }
+
+        $activities = $query->paginate(25)->withQueryString();
+
+        // Metrics & Analytics
+        $totalLogsCount = ActivityLog::count();
+        $todayLogins = ActivityLog::where('action_type', 'login')->whereDate('created_at', today())->count();
+        $todayActions = ActivityLog::whereDate('created_at', today())->count();
+        $activeClientsPast7Days = ActivityLog::where('user_role', 'client')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $mobileCount = ActivityLog::where('device_type', 'Mobile')->count();
+        $desktopCount = ActivityLog::where('device_type', 'Desktop')->count();
+        $tabletCount = ActivityLog::where('device_type', 'Tablet')->count();
+        $totalDeviceKnown = $mobileCount + $desktopCount + $tabletCount;
+
+        $clients = User::where('role', 'client')->orderBy('name')->get();
+        $domains = ActivityLog::whereNotNull('assigned_domain')
+            ->distinct()
+            ->pluck('assigned_domain')
+            ->filter()
+            ->values();
+
+        $actionTypes = [
+            'all' => 'جميع العمليات (All Actions)',
+            'login' => 'تسجيل دخول (Login)',
+            'logout' => 'تسجيل خروج (Logout)',
+            'page_view' => 'استعراض صفحة (Page View)',
+            'email_create' => 'إنشاء بريد (Email Create)',
+            'email_update' => 'تعديل بريد (Email Update)',
+            'email_delete' => 'حذف بريد (Email Delete)',
+            'forwarder_create' => 'إنشاء تحويل (Forwarder Create)',
+            'forwarder_delete' => 'حذف تحويل (Forwarder Delete)',
+            'pdf_export' => 'تصدير PDF (PDF Export)',
+            'pdf_share' => 'مشاركة PDF (PDF Share)',
+            'password_change' => 'تغيير كلمة المرور (Password Change)',
+            'profile_update' => 'تحديث الملف (Profile Update)',
+            'domain_switch' => 'تبديل النطاق (Domain Switch)',
+        ];
+
+        return view('admin.activities.index', [
+            'activities' => $activities,
+            'clients' => $clients,
+            'domains' => $domains,
+            'actionTypes' => $actionTypes,
+            'totalLogsCount' => $totalLogsCount,
+            'todayLogins' => $todayLogins,
+            'todayActions' => $todayActions,
+            'activeClientsPast7Days' => $activeClientsPast7Days,
+            'mobileCount' => $mobileCount,
+            'desktopCount' => $desktopCount,
+            'totalDeviceKnown' => $totalDeviceKnown,
+            'filters' => [
+                'user_id' => $request->input('user_id'),
+                'domain' => $request->input('domain'),
+                'action_type' => $request->input('action_type', 'all'),
+                'date_from' => $request->input('date_from'),
+                'date_to' => $request->input('date_to'),
+                'search' => $request->input('search'),
+            ],
+        ]);
+    }
+
+    /**
+     * Export activity logs to clean CSV format with UTF-8 BOM for Arabic support.
+     */
+    public function exportActivitiesCsv(Request $request): StreamedResponse
+    {
+        $query = ActivityLog::with('user')->latest();
+
+        if ($request->filled('user_id')) {
+            $query->forUser((int) $request->input('user_id'));
+        }
+
+        if ($request->filled('domain')) {
+            $query->forDomain($request->input('domain'));
+        }
+
+        if ($request->filled('action_type') && $request->input('action_type') !== 'all') {
+            $query->actionType($request->input('action_type'));
+        }
+
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
+        }
+
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->dateRange($request->input('date_from'), $request->input('date_to'));
+        }
+
+        $filename = 'moemen-team-activity-logs-'.now()->format('Y-m-d_H-i').'.csv';
+
+        return response()->streamDownload(function () use ($query) {
+            $handle = fopen('php://output', 'w');
+
+            // UTF-8 BOM for Excel Arabic compatibility
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            // CSV Header
+            fputcsv($handle, [
+                '#',
+                'التاريخ والوقت',
+                'اسم المستخدم',
+                'البريد الإلكتروني',
+                'نوع الحساب',
+                'النطاق',
+                'نوع الإجراء',
+                'عنوان الإجراء',
+                'تفاصيل إضافية',
+                'نوع الجهاز',
+                'المتصفح',
+                'نظام التشغيل',
+                'عنوان IP',
+            ]);
+
+            $query->chunk(500, function ($logs) use ($handle) {
+                foreach ($logs as $log) {
+                    $detailsString = '';
+                    if (! empty($log->details) && is_array($log->details)) {
+                        $detailsString = json_encode($log->details, JSON_UNESCAPED_UNICODE);
+                    }
+
+                    fputcsv($handle, [
+                        $log->id,
+                        $log->created_at->format('Y-m-d H:i:s'),
+                        $log->user_name ?: ($log->user?->name ?: '—'),
+                        $log->user_email ?: ($log->user?->email ?: '—'),
+                        $log->user_role === 'admin' ? 'مدير' : 'عميل',
+                        $log->assigned_domain ?: '—',
+                        $log->action_type_arabic,
+                        $log->action_title,
+                        $detailsString,
+                        $log->device_type ?: 'Desktop',
+                        $log->browser ?: '—',
+                        $log->platform ?: '—',
+                        $log->ip_address ?: '—',
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Cache-Control' => 'no-store, no-cache',
+        ]);
     }
 }
