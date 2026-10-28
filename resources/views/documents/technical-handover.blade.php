@@ -10,7 +10,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 8mm 10mm 8mm 10mm;
+            margin: 6mm 8mm 6mm 8mm;
         }
 
         * {
@@ -24,11 +24,11 @@
             direction: rtl;
             text-align: right;
             margin: 0;
-            padding: 10px 14px;
+            padding: 8px 10px;
             background-color: #FFFFFF;
             color: #0F172A;
-            font-size: 10.5px;
-            line-height: 1.45;
+            font-size: 10px;
+            line-height: 1.4;
         }
 
         .mono {
@@ -118,7 +118,7 @@
         .cert-card {
             border: 1.5px solid #047857;
             border-radius: 10px;
-            padding: 12px 14px 10px 14px;
+            padding: 10px 12px 8px 12px;
             background: #FFFFFF;
             position: relative;
         }
@@ -129,8 +129,8 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #0F172A;
-            padding-bottom: 8px;
-            margin-bottom: 8px;
+            padding-bottom: 6px;
+            margin-bottom: 6px;
         }
 
         .brand-box {
@@ -138,7 +138,7 @@
         }
 
         .brand-title {
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 900;
             color: #0F172A;
             letter-spacing: -0.3px;
@@ -153,7 +153,7 @@
         }
 
         .brand-subtitle {
-            font-size: 10px;
+            font-size: 9.5px;
             color: #475569;
             font-weight: 700;
             margin-top: 2px;
@@ -163,7 +163,7 @@
             background: linear-gradient(135deg, #064E3B 0%, #0F172A 100%);
             border: 1px solid #10B981;
             border-radius: 8px;
-            padding: 6px 12px;
+            padding: 5px 12px;
             text-align: left;
             color: #FFFFFF;
             min-width: 210px;
@@ -180,7 +180,7 @@
         .cert-badge-meta {
             font-size: 9px;
             color: #E2E8F0;
-            margin-top: 3px;
+            margin-top: 2px;
             display: flex;
             justify-content: space-between;
             gap: 8px;
@@ -194,8 +194,8 @@
             background: #F8FAFC;
             border: 1px solid #E2E8F0;
             border-radius: 6px;
-            padding: 6px 8px;
-            margin-bottom: 8px;
+            padding: 5px 8px;
+            margin-bottom: 6px;
         }
 
         .party-col {
@@ -210,14 +210,14 @@
         }
 
         .party-label {
-            font-size: 8.5px;
+            font-size: 8px;
             color: #64748B;
             font-weight: 700;
             display: block;
         }
 
         .party-val {
-            font-size: 10px;
+            font-size: 9.5px;
             color: #0F172A;
             font-weight: 800;
             white-space: nowrap;
@@ -227,7 +227,7 @@
             display: inline-block;
             background: #D1FAE5;
             color: #047857;
-            font-size: 8.5px;
+            font-size: 8px;
             font-weight: 800;
             padding: 1px 6px;
             border-radius: 4px;
@@ -236,31 +236,31 @@
 
         /* Section Block */
         .sec-block {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .sec-head {
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .sec-num {
             background: #047857;
             color: #FFFFFF;
-            width: 17px;
-            height: 17px;
+            width: 16px;
+            height: 16px;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 900;
         }
 
         .sec-title {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 800;
             color: #0F172A;
             margin: 0;
@@ -272,10 +272,10 @@
             border: 1px solid #A7F3D0;
             border-right: 3.5px solid #059669;
             border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 10px;
+            padding: 5px 10px;
+            font-size: 9.5px;
             color: #064E3B;
-            line-height: 1.5;
+            line-height: 1.45;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -300,8 +300,8 @@
         }
 
         .creds-table td {
-            padding: 5px 8px;
-            font-size: 9.5px;
+            padding: 4px 8px;
+            font-size: 9px;
             border-bottom: 1px solid #F1F5F9;
             vertical-align: middle;
         }
@@ -328,7 +328,7 @@
             border: 1px solid #CBD5E1;
             padding: 2px 7px;
             border-radius: 4px;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             color: #0F172A;
         }
@@ -337,7 +337,7 @@
             background: #FEF3C7;
             border-color: #FCD34D;
             color: #92400E;
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 800;
             letter-spacing: 0.5px;
         }
@@ -353,13 +353,115 @@
             border: 1px solid #FDE68A;
             border-radius: 5px;
             padding: 4px 8px;
-            margin-top: 4px;
-            font-size: 9px;
+            margin-top: 3px;
+            font-size: 8.5px;
             color: #92400E;
             display: flex;
             align-items: center;
             gap: 6px;
-            line-height: 1.4;
+            line-height: 1.35;
+        }
+
+        /* 3. Getting Started Section */
+        .start-guide-wrap {
+            display: flex;
+            gap: 8px;
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            border-right: 3.5px solid #047857;
+            border-radius: 6px;
+            padding: 5px 8px;
+            align-items: stretch;
+        }
+
+        .start-steps-col {
+            flex: 1.25;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-left: 1px solid #E2E8F0;
+            padding-left: 8px;
+            justify-content: center;
+        }
+
+        .start-step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            font-size: 8.8px;
+            color: #1E293B;
+            line-height: 1.35;
+        }
+
+        .step-badge {
+            background: #047857;
+            color: #FFFFFF;
+            font-size: 7.5px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .start-videos-col {
+            flex: 1.1;
+            display: flex;
+            flex-direction: column;
+            gap: 3.5px;
+            justify-content: center;
+        }
+
+        .video-link-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+
+        .video-link-item.official-pdf-row {
+            background: #ECFDF5;
+            border-color: #A7F3D0;
+        }
+
+        .vid-icon {
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .vid-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 6px;
+        }
+
+        .vid-title {
+            color: #1E293B;
+            font-weight: 700;
+            font-size: 8.5px;
+        }
+
+        .vid-btn {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            color: #1D4ED8;
+            font-weight: 800;
+            text-decoration: none;
+            padding: 1.5px 6px;
+            border-radius: 3px;
+            font-size: 8px;
+            white-space: nowrap;
+        }
+
+        .vid-btn.pdf-btn {
+            background: #D1FAE5;
+            border-color: #6EE7B7;
+            color: #047857;
         }
 
         /* Server Settings Table */
@@ -379,20 +481,20 @@
         .settings-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
+            font-size: 8.5px;
             text-align: center;
         }
 
         .settings-table th {
             background: #0F172A;
             color: #FFFFFF;
-            padding: 4px 6px;
+            padding: 3px 5px;
             font-weight: 800;
-            font-size: 9px;
+            font-size: 8.5px;
         }
 
         .settings-table td {
-            padding: 4px 6px;
+            padding: 3px 5px;
             border-bottom: 1px solid #E2E8F0;
             color: #1E293B;
             font-weight: 600;
@@ -411,16 +513,16 @@
             background: #F0FDF4;
             border: 1px solid #BBF7D0;
             border-radius: 6px;
-            padding: 6px 8px;
-            font-size: 9px;
+            padding: 5px 8px;
+            font-size: 8.5px;
             color: #166534;
-            line-height: 1.45;
+            line-height: 1.4;
         }
 
         .it-guide-title {
             font-weight: 800;
             color: #047857;
-            font-size: 9.5px;
+            font-size: 9px;
             margin-bottom: 2px;
             display: flex;
             align-items: center;
@@ -440,21 +542,21 @@
             background: #F8FAFC;
             border: 1px solid #E2E8F0;
             border-radius: 6px;
-            padding: 5px 8px;
+            padding: 4px 8px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .support-icon {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             border-radius: 6px;
             background: #E2E8F0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 12px;
             flex-shrink: 0;
         }
 
@@ -463,14 +565,14 @@
         }
 
         .support-lbl {
-            font-size: 8.5px;
+            font-size: 8px;
             color: #64748B;
             font-weight: 700;
             display: block;
         }
 
         .support-link {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #0F172A;
             font-weight: 800;
             text-decoration: none;
@@ -479,8 +581,8 @@
         /* Signatures & Seal Box */
         .sign-seal-section {
             border-top: 1.5px dashed #CBD5E1;
-            padding-top: 7px;
-            margin-top: 6px;
+            padding-top: 5px;
+            margin-top: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -492,20 +594,20 @@
         }
 
         .sign-title {
-            font-size: 9px;
+            font-size: 8.5px;
             font-weight: 800;
             color: #475569;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .sign-name {
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 900;
             color: #0F172A;
         }
 
         .sign-status {
-            font-size: 8px;
+            font-size: 7.5px;
             color: #047857;
             font-weight: 700;
             margin-top: 1px;
@@ -525,8 +627,8 @@
             background: #ECFDF5;
             color: #064E3B;
             border-radius: 20px;
-            padding: 3px 12px;
-            font-size: 8.5px;
+            padding: 2px 10px;
+            font-size: 8px;
             font-weight: 900;
             letter-spacing: 0.3px;
             box-shadow: 0 1px 3px rgba(5,150,105,0.15);
@@ -534,7 +636,7 @@
         }
 
         .seal-subtext {
-            font-size: 7.5px;
+            font-size: 7px;
             color: #64748B;
             margin-top: 2px;
             font-weight: 600;
@@ -543,11 +645,11 @@
 
         .cert-footer-line {
             text-align: center;
-            font-size: 7.5px;
+            font-size: 7px;
             color: #94A3B8;
-            margin-top: 5px;
+            margin-top: 4px;
             border-top: 1px solid #F1F5F9;
-            padding-top: 3px;
+            padding-top: 2px;
         }
     </style>
 </head>
@@ -627,7 +729,7 @@
                 <h3 class="sec-title">ملخص ما تم إنجازه فنياً</h3>
             </div>
             <div class="tech-summary-box">
-                <span style="font-size:14px;">🛡️</span>
+                <span style="font-size:13px;">🛡️</span>
                 <div>
                     تم بنجاح وبأعلى المعايير الهندسية ربط نطاق شركة البرلسي (<span class="mono" dir="ltr" style="font-weight:700;">albrolosy.com</span>) وتوثيقه بالكامل بأعلى معايير الأمان العالمية (سجلات <strong>SPF</strong> و <strong>DKIM</strong> و <strong>DMARC</strong> و <strong>MX</strong>) وتشفير <strong>SSL/TLS</strong>، لضمان وصول كافة الإيميلات الصادرة والواردة إلى صندوق الوارد (<strong>Inbox</strong>) مباشرة بأعلى موثوقية وبمنع كامل لتصنيفها كرسائل غير مرغوب فيها (Spam).
                 </div>
@@ -646,7 +748,7 @@
                         <td class="cr-lbl">رابط لوحة التحكم الإدارية:</td>
                         <td class="cr-val">
                             <a href="https://email-service.moemen-team.tech/login" target="_blank" class="code-pill highlight mono" style="text-decoration:none;">https://email-service.moemen-team.tech/login</a>
-                            <span style="color:#64748B; font-size:8.5px; margin-right:4px;">(لإدارة وإنشاء وتوزيع الحسابات والحصص)</span>
+                            <span style="color:#64748B; font-size:8px; margin-right:4px;">(لإدارة وإنشاء وتوزيع الحسابات والحصص)</span>
                         </td>
                     </tr>
                     <tr>
@@ -659,14 +761,14 @@
                         <td class="cr-lbl">كلمة المرور الرئيسية:</td>
                         <td class="cr-val">
                             <span class="code-pill secret mono">Xzd@7Xy5ZqU6#Clrr3!</span>
-                            <span style="color:#059669; font-size:8.5px; font-weight:700; margin-right:6px;">✓ موحدة ومعتمدة للوحة التحكم والبريد المباشر</span>
+                            <span style="color:#059669; font-size:8px; font-weight:700; margin-right:6px;">✓ موحدة ومعتمدة للوحة التحكم والبريد المباشر</span>
                         </td>
                     </tr>
                     <tr>
                         <td class="cr-lbl">رابط بريد الويب المباشر (Webmail):</td>
                         <td class="cr-val">
                             <a href="https://mail.albrolosy.com/" target="_blank" class="code-pill mono" style="text-decoration:none;">https://mail.albrolosy.com/</a>
-                            <span style="color:#64748B; font-size:8.5px; margin-right:4px;">(لقراءة وإرسال البريد إلكترونياً من أي متصفح)</span>
+                            <span style="color:#64748B; font-size:8px; margin-right:4px;">(لقراءة وإرسال البريد إلكترونياً من أي متصفح)</span>
                         </td>
                     </tr>
                     <tr>
@@ -680,17 +782,73 @@
             </div>
 
             <div class="sec-warning">
-                <span style="font-size:11px;">⚠️</span>
+                <span style="font-size:10px;">⚠️</span>
                 <div>
                     <strong>إجراء أمني واجب (Security Notice):</strong> يُرجى من إدارة شركة البرلسي تغيير كلمة المرور فور تسجيل الدخول الأول من خلال إعدادات الحساب (Profile Settings) في لوحة التحكم، أو طلب إعادة تعيين كلمة المرور عبر النظام حفاظاً على سرية بيانات المنشأة.
                 </div>
             </div>
         </div>
 
-        <!-- 3. Server Settings & Quick Setup -->
+        <!-- 3. How to Start & Video Tours -->
         <div class="sec-block">
             <div class="sec-head">
                 <div class="sec-num">3</div>
+                <h3 class="sec-title">كيف تبدأ؟ (دليل الانطلاق والجولات المرئية السريعة)</h3>
+            </div>
+            <div class="start-guide-wrap">
+                <!-- Right: Steps -->
+                <div class="start-steps-col">
+                    <div class="start-step-item">
+                        <span class="step-badge">خطوة 1</span>
+                        <div>
+                            <strong>تسجيل الدخول والبدء الفوري:</strong> قم بتسجيل الدخول عبر الرابط الموضح أعلاه لإنشاء حسابات الموظفين وتعيين التحويلات البريدية (<span class="mono" dir="ltr" style="font-weight:700;">Forwarding</span>) بضغطة زر.
+                        </div>
+                    </div>
+                    <div class="start-step-item">
+                        <span class="step-badge">خطوة 2</span>
+                        <div>
+                            <strong>دليل الاستخدام المباشر داخل اللوحة:</strong> أعددنا لكم قسم «دليل الاستخدام» داخل لوحة التحكم مباشرة؛ يحتوي على شرح مفصل لكيفية استخدام النظام وربط الحسابات بتطبيقات الهواتف والكمبيوتر (<span class="mono" dir="ltr">Outlook / Apple Mail / Gmail</span>).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Left: Video links & Document -->
+                <div class="start-videos-col">
+                    <div class="video-link-item">
+                        <span class="vid-icon">🎬</span>
+                        <div class="vid-info">
+                            <span class="vid-title">جولة سريعة داخل الداشبورد (دقيقتين):</span>
+                            <a href="https://drive.google.com/file/d/1AGCHnkrAhOdKsTS8NmkSptCN_jpEGwJO/view?usp=drivesdk" target="_blank" class="vid-btn">
+                                مشاهدة فيديو التجربة &larr;
+                            </a>
+                        </div>
+                    </div>
+                    <div class="video-link-item">
+                        <span class="vid-icon">💻</span>
+                        <div class="vid-info">
+                            <span class="vid-title">شرح الاستخدام والربط على Outlook:</span>
+                            <a href="https://drive.google.com/file/d/1gddBAA2Del_YsvwGEVt4njAJrvzmS5Xl/view?usp=drivesdk" target="_blank" class="vid-btn">
+                                مشاهدة فيديو الشرح &larr;
+                            </a>
+                        </div>
+                    </div>
+                    <div class="video-link-item official-pdf-row">
+                        <span class="vid-icon">📄</span>
+                        <div class="vid-info">
+                            <span class="vid-title">وثيقة التسليم الرسمية الشاملة:</span>
+                            <a href="https://email-service.moemen-team.tech/documents/Moemen-Team-Cloud-Email-Handover-AR.pdf" target="_blank" class="vid-btn pdf-btn">
+                                تحميل الوثيقة (PDF) &larr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Server Settings & Quick Setup -->
+        <div class="sec-block">
+            <div class="sec-head">
+                <div class="sec-num">4</div>
                 <h3 class="sec-title">بيانات الربط السريع لأجهزة وبرامج البريد (Server Settings)</h3>
             </div>
             <div class="settings-grid-wrap">
@@ -736,17 +894,17 @@
                         &bull; <strong>كلمة المرور:</strong> هي الباسورد الخاص بنفس الإيميل.<br>
                         &bull; <strong>دليل التثبيت:</strong> خطوات الربط ببرامج Outlook وهواتف iPhone و Android مشروحة بالكامل وبالصور داخل قسم <strong>«دليل الاستخدام»</strong> في اللوحة عبر الرابط:
                         <div style="margin-top:2px;">
-                            <a href="https://email-service.moemen-team.tech/emails/guide" target="_blank" class="mono" dir="ltr" style="color:#047857; font-weight:800; text-decoration:none; font-size:8.5px;">email-service.moemen-team.tech/emails/guide</a>
+                            <a href="https://email-service.moemen-team.tech/emails/guide" target="_blank" class="mono" dir="ltr" style="color:#047857; font-weight:800; text-decoration:none; font-size:8px;">email-service.moemen-team.tech/emails/guide</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Support SLA -->
+        <!-- 5. Support SLA -->
         <div class="sec-block">
             <div class="sec-head">
-                <div class="sec-num">4</div>
+                <div class="sec-num">5</div>
                 <h3 class="sec-title">آلية الدعم الفني وضمان استمرارية الخدمة</h3>
             </div>
             <div class="support-grid">
@@ -755,7 +913,7 @@
                     <div class="support-info">
                         <span class="support-lbl">البريد الإلكتروني الرسمي للدعم الفني:</span>
                         <a href="mailto:support@moemen-team.tech" class="support-link mono" dir="ltr">support@moemen-team.tech</a>
-                        <div style="font-size:8px; color:#64748B;">متاح لاستقبال البلاغات والاستفسارات التقنية</div>
+                        <div style="font-size:7.5px; color:#64748B;">متاح لاستقبال البلاغات والاستفسارات التقنية</div>
                     </div>
                 </div>
 
@@ -764,13 +922,13 @@
                     <div class="support-info">
                         <span class="support-lbl">بوابة المعالجة السريعة (Fast Fixing):</span>
                         <a href="https://moemen-team.tech" target="_blank" class="support-link mono" dir="ltr">https://moemen-team.tech</a>
-                        <div style="font-size:8px; color:#059669; font-weight:700;">طلب تدخل هندسي فوري عبر نظام Moemen Team</div>
+                        <div style="font-size:7.5px; color:#059669; font-weight:700;">طلب تدخل هندسي فوري عبر نظام Moemen Team</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 5. Sign-off & Seal -->
+        <!-- 6. Sign-off & Seal -->
         <div class="sign-seal-section">
             <div class="sign-col">
                 <div class="sign-title">الطرف الأول (الجهة المنفذة والضامنة):</div>
